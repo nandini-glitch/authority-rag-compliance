@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+chroma_db/
+data/raw_pdfs/*
+!data/raw_pdfs/.gitkeep
+results/*
+!results/.gitkeep

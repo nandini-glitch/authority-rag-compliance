@@ -1,0 +1,21 @@
+project:
+  name: "authority-rag-compliance"
+  description: "Evaluating RAG Hallucination Rates under Regulatory Drift in Indian Financial Documents"
+
+chunking:
+  chunk_size: 512
+  chunk_overlap: 64
+
+retrieval:
+  top_k: 5
+  collection_name: "indian_financial_compliance"
+
+models:
+  generator: "gpt-4o"
+  judge: "gpt-4o"
+  embedding: "text-embedding-3-small"
+
+authority_tiers:
+  tier_1: "Reserve Bank of India (RBI)"
+  tier_2: "Securities and Exchange Board of India (SEBI)"
+  tier_3: "Commercial Bank Internal Compliance / Policy Docs"
