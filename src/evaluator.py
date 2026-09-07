@@ -1,10 +1,23 @@
+import os
 import json
-from openai import OpenAI
+import re
+from typing import Dict, Any, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from src.pipelines import init_llm_client, call_with_retry
+
+VALID_CLASSIFICATIONS = [
+    "AUTHORITY_CORRECT_RESOLUTION",
+    "FRANKENSTEIN_BLENDING",
+    "PARAMETRIC_LEAKAGE",
+    "OUTDATED_RULE_SELECTED"
+]
 
 class ComplianceEvaluator:
-    def __init__(self, model_name: str = "gpt-4o"):
-        self.client = OpenAI()
-        self.model_name = model_name
+    def __init__(self, model_name: Optional[str] = None):
+        self.client, self.model_name = init_llm_client(preferred_model=model_name)
 
     def evaluate_response(self, query: str, ground_truth: str, generated_response: str) -> Dict[str, Any]:
         eval_prompt = f"""
@@ -24,10 +37,39 @@ Evaluate the Generated Model Response and output a JSON with two keys:
 
 Return JSON ONLY.
 """
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=[{"role": "user", "content": eval_prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.0
+        response = call_with_retry(
+            lambda: self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": eval_prompt}],
+                response_format={"type": "json_object"},
+                temperature=0.0
+            )
         )
-        return json.loads(response.choices[0].message.content)
+        content = response.choices[0].message.content.strip()
+
+        try:
+            parsed = json.loads(content)
+        except json.JSONDecodeError:
+            match = re.search(r"\{.*\}", content, re.DOTALL)
+            if match:
+                parsed = json.loads(match.group(0))
+            else:
+                parsed = {
+                    "classification": "PARAMETRIC_LEAKAGE",
+                    "reasoning": f"Failed to parse evaluator JSON response: {content}"
+                }
+
+        # Validate classification key
+        classification = parsed.get("classification", "").strip()
+        if classification not in VALID_CLASSIFICATIONS:
+            # Fallback search for classification in text
+            found = False
+            for vc in VALID_CLASSIFICATIONS:
+                if vc in classification:
+                    parsed["classification"] = vc
+                    found = True
+                    break
+            if not found:
+                parsed["classification"] = "FRANKENSTEIN_BLENDING"
+
+        return parsed

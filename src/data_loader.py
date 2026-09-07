@@ -13,19 +13,19 @@ DOCUMENT_SOURCES = [
     {
         "doc_id": "RBI/2022-23/111",
         "title": "RBI Guidelines on Digital Lending 2022",
-        # rbidocs.rbi.org.in is captcha-walled for automated clients -
-        # use this mirror instead (verified working, plain PDF)
         "url": "https://fidcindia.org.in/wp-content/uploads/2022/09/RBI-GUIDELINES-ON-DIGITAL-LENDING-02-09-22.pdf",
         "filename": "rbi_digital_lending_2022.pdf",
         "issuer": "Reserve Bank of India",
         "authority_tier": 1,
         "doc_type": "Guidelines",
         "date_issued": "2022-09-02",
-        "status": "outdated"
+        "status": "outdated",
+        "topic": "Digital Lending",
+        "is_repealed": True,
+        "superseded_by": "RBI/2025-26/36"
     },
     {
-        "doc_id": "RBI/2025-26/DL_Directions",
-        # Corrected: repealed by "Directions, 2025", not a 2024 Master Direction
+        "doc_id": "RBI/2025-26/36",
         "title": "Reserve Bank of India (Digital Lending) Directions, 2025",
         "url": "https://www.axis.bank.in/docs/default-source/default-document-library/reserve-bank-of-india-digital-lending-directions2025.pdf",
         "filename": "rbi_digital_lending_2025.pdf",
@@ -33,7 +33,24 @@ DOCUMENT_SOURCES = [
         "authority_tier": 1,
         "doc_type": "Directions",
         "date_issued": "2025-05-08",
-        "status": "current"
+        "status": "current",
+        "topic": "Digital Lending",
+        "is_repealed": False,
+        "superseded_by": ""
+    },
+    {
+        "doc_id": "ACB/POL/DL/2024-25/04",
+        "title": "Apex Commercial Bank - Internal SOP for Digital Lending 2024",
+        "url": "",
+        "filename": "bank_internal_digital_lending_policy_2024.txt",
+        "issuer": "Apex Commercial Bank (Internal Policy)",
+        "authority_tier": 3,
+        "doc_type": "Internal Policy",
+        "date_issued": "2024-04-15",
+        "status": "internal_active",
+        "topic": "Digital Lending",
+        "is_repealed": False,
+        "superseded_by": ""
     }
 ]
 
@@ -48,6 +65,8 @@ def download_pdfs():
     }
 
     for item in DOCUMENT_SOURCES:
+        if not item.get("url"):
+            continue
         filepath = os.path.join(RAW_DIR, item["filename"])
         if os.path.exists(filepath):
             print(f"File already exists: {filepath}")
@@ -71,44 +90,55 @@ def download_pdfs():
                   f"Download manually from {item['url']} and place it at {filepath}.")
 
 
-def extract_text_chunks(chunk_size: int = 1000) -> List[Dict[str, Any]]:
-    """Parses downloaded PDFs into metadata-enriched text chunks."""
+def extract_text_chunks(chunk_size: int = 800, chunk_overlap: int = 100) -> List[Dict[str, Any]]:
+    """Parses downloaded PDFs and text documents into metadata-enriched text chunks."""
     all_chunks = []
+    step = max(50, chunk_size - chunk_overlap)
 
     for item in DOCUMENT_SOURCES:
-        pdf_path = os.path.join(RAW_DIR, item["filename"])
-        if not os.path.exists(pdf_path):
+        doc_path = os.path.join(RAW_DIR, item["filename"])
+        if not os.path.exists(doc_path):
             print(f"Skipping {item['filename']} (file does not exist)")
             continue
 
-        reader = PdfReader(pdf_path)
         full_text = ""
-        for page in reader.pages:
-            text = page.extract_text()
-            if text:
-                full_text += text + "\n"
+        if item["filename"].endswith(".pdf"):
+            reader = PdfReader(doc_path)
+            for page in reader.pages:
+                text = page.extract_text()
+                if text:
+                    full_text += text + "\n"
+        elif item["filename"].endswith(".txt"):
+            with open(doc_path, "r", encoding="utf-8") as f:
+                full_text = f.read()
 
         if not full_text.strip():
             print(f"Warning: no extractable text in {item['filename']} "
                   f"(may be a scanned/image PDF - needs OCR)")
             continue
 
-        for i in range(0, len(full_text), chunk_size - 100):
+        chunk_idx = 0
+        for i in range(0, len(full_text), step):
             chunk_text = full_text[i:i + chunk_size].strip()
             if len(chunk_text) < 100:
                 continue
 
-            chunk_id = f"{item['doc_id'].replace('/', '_')}_chunk_{i // chunk_size}"
+            chunk_id = f"{item['doc_id'].replace('/', '_').replace(' ', '_')}_chunk_{chunk_idx}"
+            chunk_idx += 1
+
             chunk_data = {
                 "chunk_id": chunk_id,
                 "text": chunk_text,
                 "metadata": {
                     "doc_id": item["doc_id"],
                     "issuer": item["issuer"],
-                    "authority_tier": item["authority_tier"],
+                    "authority_tier": int(item["authority_tier"]),
                     "doc_type": item["doc_type"],
                     "date_issued": item["date_issued"],
                     "status": item["status"],
+                    "topic": item["topic"],
+                    "is_repealed": bool(item["is_repealed"]),
+                    "superseded_by": item["superseded_by"] or "",
                     "filename": item["filename"]
                 }
             }
@@ -120,7 +150,6 @@ def extract_text_chunks(chunk_size: int = 1000) -> List[Dict[str, Any]]:
 
     print(f"Successfully processed {len(all_chunks)} chunks to {parsed_out_path}")
     return all_chunks
-
 
 if __name__ == "__main__":
     download_pdfs()
