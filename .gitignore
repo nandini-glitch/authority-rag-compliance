@@ -5,4 +5,5 @@ chroma_db/
 data/raw_pdfs/*
 !data/raw_pdfs/.gitkeep
 results/*
-!results/.gitkeepvenv/
+!results/.gitkeep
+venv/
