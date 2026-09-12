@@ -1505,7 +1505,7 @@
   },
   {
     "chunk_id": "ACB_POL_DL_2024-25_04_chunk_0",
-    "text": "APEX COMMERCIAL BANK LIMITED\nPOLICY DOCUMENT & STANDARD OPERATING PROCEDURE (SOP)\nDOCUMENT NO: ACB/POL/DL/2024-25/04\nDATE OF ISSUANCE: April 15, 2024\nAUTHORITY LEVEL: Tier 3 (Commercial Bank Internal Policy)\nSUBJECT: Internal Operational Policy for Digital Lending and FinTech Partnerships\n\n1. Scope and Applicability\nThis Policy governs digital lending sourcing, underwriting, disbursements, servicing, and collections across all Digital Lending Applications (DLAs) operated by Apex Commercial Bank or its partnered Lending Service Providers (LSPs).\n\n2. Look-up / Cooling-Off Window and Instant Waiver\n2.1. The cooling-off period for digital retail loans disbursed through partnered DLAs shall be 7 (seven) days from the date of loan disbursal.\n2.2. Borrower Instant Waiver: To expedite disbursement",
+    "text": "APEX COMMERCIAL BANK LIMITED\nPOLICY DOCUMENT & STANDARD OPERATING PROCEDURE (SOP)\nDOCUMENT NO: ACB/POL/DL/2024-25/04\nDATE OF ISSUANCE: April 15, 2024\nSUBJECT: Internal Operational Policy for Digital Lending and FinTech Partnerships\n\n1. Scope and Applicability\nThis Policy governs digital lending sourcing, underwriting, disbursements, servicing, and collections across all Digital Lending Applications (DLAs) operated by Apex Commercial Bank or its partnered Lending Service Providers (LSPs).\n\n2. Look-up / Cooling-Off Window and Instant Waiver\n2.1. The cooling-off period for digital retail loans disbursed through partnered DLAs shall be 7 (seven) days from the date of loan disbursal.\n2.2. Borrower Instant Waiver: To expedite disbursement and provide seamless user experience, borrowers may elect",
     "metadata": {
       "doc_id": "ACB/POL/DL/2024-25/04",
       "issuer": "Apex Commercial Bank (Internal Policy)",
@@ -1521,7 +1521,7 @@
   },
   {
     "chunk_id": "ACB_POL_DL_2024-25_04_chunk_1",
-    "text": "(seven) days from the date of loan disbursal.\n2.2. Borrower Instant Waiver: To expedite disbursement and provide seamless user experience, borrowers may elect to opt out or waive their cooling-off exit window at the time of checkout by ticking an in-app consent checkbox. Upon waiver, disbursal is finalized without look-up cancellation rights.\n2.3. If a borrower exits during cooling-off, the bank shall refund all processing charges except an administrative fee of \u20b9500.\n\n3. Default Loss Guarantee (DLG) / First Loss Default Guarantee (FLDG)\n3.1. Under strategic FinTech partnerships, the Bank is permitted to accept Default Loss Guarantee (DLG) / First Loss Default Guarantee (FLDG) from corporate LSP partners.\n3.2. Portfolio Cap: For high-yield digital unsecured portfolios sourced via Tier-A LS",
+    "text": "r Instant Waiver: To expedite disbursement and provide seamless user experience, borrowers may elect to opt out or waive their cooling-off exit window at the time of checkout by ticking an in-app consent checkbox. Upon waiver, disbursal is finalized without look-up cancellation rights.\n2.3. If a borrower exits during cooling-off, the bank shall refund all processing charges except an administrative fee of \u20b9500.\n\n3. Default Loss Guarantee (DLG) / First Loss Default Guarantee (FLDG)\n3.1. Under strategic FinTech partnerships, the Bank is permitted to accept Default Loss Guarantee (DLG) / First Loss Default Guarantee (FLDG) from corporate LSP partners.\n3.2. Portfolio Cap: For high-yield digital unsecured portfolios sourced via Tier-A LSPs, the Bank's Credit Risk Committee may approve DLG cover",
     "metadata": {
       "doc_id": "ACB/POL/DL/2024-25/04",
       "issuer": "Apex Commercial Bank (Internal Policy)",
@@ -1537,7 +1537,7 @@
   },
   {
     "chunk_id": "ACB_POL_DL_2024-25_04_chunk_2",
-    "text": "LSP partners.\n3.2. Portfolio Cap: For high-yield digital unsecured portfolios sourced via Tier-A LSPs, the Bank's Credit Risk Committee may approve DLG coverage agreements covering up to 10% (ten percent) of the total disbursed portfolio.\n3.3. Forms of DLG: The DLG may be accepted in the form of corporate bank guarantees, escrowed cash deposits, or contractual letters of comfort issued by the LSP's parent holding entity.\n\n4. Data Privacy, Customer Consent and Biometric Storage\n4.1. DLAs must obtain customer consent before accessing phone metadata.\n4.2. Biometric Token Caching: In order to streamline recurring re-authentication and reduce API latency, encrypted biometric authentication tokens and fingerprint minutiae data may be temporarily stored on secured, audited servers of partnered L",
+    "text": "unsecured portfolios sourced via Tier-A LSPs, the Bank's Credit Risk Committee may approve DLG coverage agreements covering up to 10% (ten percent) of the total disbursed portfolio.\n3.3. Forms of DLG: The DLG may be accepted in the form of corporate bank guarantees, escrowed cash deposits, or contractual letters of comfort issued by the LSP's parent holding entity.\n\n4. Data Privacy, Customer Consent and Biometric Storage\n4.1. DLAs must obtain customer consent before accessing phone metadata.\n4.2. Biometric Token Caching: In order to streamline recurring re-authentication and reduce API latency, encrypted biometric authentication tokens and fingerprint minutiae data may be temporarily stored on secured, audited servers of partnered LSPs for up to 90 (ninety) days.\n\n5. Collections and Delinq",
     "metadata": {
       "doc_id": "ACB/POL/DL/2024-25/04",
       "issuer": "Apex Commercial Bank (Internal Policy)",
@@ -1553,7 +1553,7 @@
   },
   {
     "chunk_id": "ACB_POL_DL_2024-25_04_chunk_3",
-    "text": "s and fingerprint minutiae data may be temporarily stored on secured, audited servers of partnered LSPs for up to 90 (ninety) days.\n\n5. Collections and Delinquent Loan Recovery\n5.1. All primary repayments shall be routed through electronic mandates (e-NACH/UPI AutoPay).\n5.2. Cash Recovery by LSPs: In cases where borrower accounts are in delinquency (>30 days past due) and digital recovery attempts have failed, authorized recovery agents of the LSP may collect physical cash from borrowers at their residence against physical bank receipts.",
+    "text": "on secured, audited servers of partnered LSPs for up to 90 (ninety) days.\n\n5. Collections and Delinquent Loan Recovery\n5.1. All primary repayments shall be routed through electronic mandates (e-NACH/UPI AutoPay).\n5.2. Cash Recovery by LSPs: In cases where borrower accounts are in delinquency (>30 days past due) and digital recovery attempts have failed, authorized recovery agents of the LSP may collect physical cash from borrowers at their residence against physical bank receipts.",
     "metadata": {
       "doc_id": "ACB/POL/DL/2024-25/04",
       "issuer": "Apex Commercial Bank (Internal Policy)",

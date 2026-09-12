@@ -10,7 +10,7 @@ from src.parser import ComplianceChunk, format_authority_header
 
 def get_embedding_function(provider: str = "auto"):
     load_dotenv()
-    if provider == "openai":
+    if provider in ("openai", "auto"):
         api_key = os.getenv("OPENAI_API_KEY")
         if api_key:
             try:

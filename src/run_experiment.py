@@ -135,6 +135,9 @@ def generate_markdown_report(summary: dict, detailed_results: list, out_path: st
 
         md.append("#### Comparative Pipeline Responses:\n")
         for mode in modes:
+            if mode not in item["modes"]:
+                md.append(f"- **Mode: `{mode}`** - *(not yet run)*\n")
+                continue
             res_item = item["modes"][mode]
             classification = res_item["eval"]["classification"]
             reasoning = res_item["eval"]["reasoning"]
@@ -172,40 +175,50 @@ def main():
     print(f"Pipeline & Evaluator initialized using model: {pipeline.model_name}")
 
     modes = ["naive", "recency_only", "full"]
-    results_detailed = []
-    summary_stats = {
-        m: {
-            "total": 0,
-            "AUTHORITY_CORRECT_RESOLUTION": 0,
-            "FRANKENSTEIN_BLENDING": 0,
-            "OUTDATED_RULE_SELECTED": 0,
-            "PARAMETRIC_LEAKAGE": 0
-        }
-        for m in modes
-    }
+
+    # Load existing results (case-by-case, mode-by-mode) if present
+    results_by_id = {}
+    if os.path.exists("results/experiment_results.json"):
+        with open("results/experiment_results.json", "r", encoding="utf-8") as f:
+            existing = json.load(f)
+        for r in existing:
+            results_by_id[r["id"]] = r
+        print(f"Loaded existing progress for {len(results_by_id)} case(s).")
+
+    def save_progress():
+        os.makedirs("results", exist_ok=True)
+        ordered = [results_by_id[tc["id"]] for tc in BENCHMARK_CASES if tc["id"] in results_by_id]
+        with open("results/experiment_results.json", "w", encoding="utf-8") as f:
+            json.dump(ordered, f, indent=2)
 
     print(f"\nRunning benchmark suite ({len(BENCHMARK_CASES)} test cases x {len(modes)} modes)...")
 
     for tc in BENCHMARK_CASES:
+        if tc["id"] not in results_by_id:
+            results_by_id[tc["id"]] = {
+                "id": tc["id"],
+                "topic": tc["topic"],
+                "conflict_type": tc["conflict_type"],
+                "query": tc["query"],
+                "ground_truth": tc["ground_truth"],
+                "modes": {}
+            }
+        case_record = results_by_id[tc["id"]]
+
         print(f"\n[Case {tc['id']}] {tc['topic']}")
         print(f"Query: {tc['query']}")
 
-        case_record = {
-            "id": tc["id"],
-            "topic": tc["topic"],
-            "conflict_type": tc["conflict_type"],
-            "query": tc["query"],
-            "ground_truth": tc["ground_truth"],
-            "modes": {}
-        }
-
         for mode in modes:
+            if mode in case_record["modes"]:
+                print(f"  Mode: {mode} already done, skipping")
+                continue
+
             print(f"  Running mode: {mode}...", end="", flush=True)
             t0 = time.time()
-            res = pipeline.run(query=tc["query"], top_k=5, mode=mode)
+            res = pipeline.run(query=tc["query"], top_k=15, mode=mode)
             gen_latency = time.time() - t0
 
-            time.sleep(3)  # Gentle pacing to respect rate limits
+            time.sleep(35)
 
             t_eval = time.time()
             eval_res = evaluator.evaluate_response(
@@ -216,35 +229,43 @@ def main():
             eval_latency = time.time() - t_eval
             total_latency = gen_latency + eval_latency
 
-            classification = eval_res.get("classification", "FRANKENSTEIN_BLENDING")
-            summary_stats[mode]["total"] += 1
-            summary_stats[mode][classification] = summary_stats[mode].get(classification, 0) + 1
-
             case_record["modes"][mode] = {
                 "response": res["response"],
                 "latency_sec": round(total_latency, 2),
                 "eval": eval_res,
                 "retrieved_doc_ids": [d["metadata"]["doc_id"] for d in res["retrieved_docs"]]
             }
-            print(f" -> {classification} (gen: {gen_latency:.1f}s, eval: {eval_latency:.1f}s)")
-            time.sleep(4)  # Pacing between mode evaluations
+            print(f" -> {eval_res.get('classification')} (gen: {gen_latency:.1f}s, eval: {eval_latency:.1f}s)")
 
-        results_detailed.append(case_record)
+            save_progress()
 
-        # Incremental save checkpoint
-        os.makedirs("results", exist_ok=True)
-        with open("results/experiment_results.json", "w", encoding="utf-8") as f:
-            json.dump(results_detailed, f, indent=2)
+            time.sleep(40)
 
-    # Save summary JSON
+    summary_stats = {
+        m: {
+            "total": 0,
+            "AUTHORITY_CORRECT_RESOLUTION": 0,
+            "FRANKENSTEIN_BLENDING": 0,
+            "OUTDATED_RULE_SELECTED": 0,
+            "PARAMETRIC_LEAKAGE": 0
+        }
+        for m in modes
+    }
+    for case_record in results_by_id.values():
+        for mode in modes:
+            if mode in case_record["modes"]:
+                classification = case_record["modes"][mode]["eval"]["classification"]
+                summary_stats[mode]["total"] += 1
+                summary_stats[mode][classification] = summary_stats[mode].get(classification, 0) + 1
+
     with open("results/evaluation_summary.json", "w", encoding="utf-8") as f:
         json.dump(summary_stats, f, indent=2)
 
-    # Generate Markdown Report
+    results_detailed = [results_by_id[tc["id"]] for tc in BENCHMARK_CASES if tc["id"] in results_by_id]
     generate_markdown_report(summary_stats, results_detailed, "results/OBSERVATIONS.md")
 
     print("\n" + "=" * 70)
-    print("EXPERIMENT EXECUTION COMPLETE")
+    print("EXPERIMENT EXECUTION COMPLETE (or paused - re-run to continue)")
     print("=" * 70)
     print("\nQuantitative Summary:")
     for mode in modes:
@@ -252,7 +273,7 @@ def main():
         acc = (st['AUTHORITY_CORRECT_RESOLUTION'] / st['total'] * 100) if st['total'] else 0
         print(f"  Mode: {mode.upper():<14} | Correct: {st['AUTHORITY_CORRECT_RESOLUTION']}/{st['total']} ({acc:.1f}%) | Frankenstein: {st['FRANKENSTEIN_BLENDING']} | Outdated: {st['OUTDATED_RULE_SELECTED']} | Parametric: {st['PARAMETRIC_LEAKAGE']}")
 
-    print(f"\nFull results saved to:")
+    print(f"\nResults saved to:")
     print("  - results/experiment_results.json")
     print("  - results/evaluation_summary.json")
     print("  - results/OBSERVATIONS.md")

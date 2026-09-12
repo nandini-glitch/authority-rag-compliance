@@ -9,16 +9,18 @@ load_dotenv()
 
 from src.parser import RegulatoryMetadata, format_authority_header
 
-def call_with_retry(api_fn, max_retries: int = 6, default_wait: int = 15):
+def call_with_retry(api_fn, max_retries: int = 8, default_wait: int = 20):
     for attempt in range(max_retries):
         try:
             return api_fn()
         except Exception as e:
             err_str = str(e)
-            if "429" in err_str or "quota" in err_str.lower() or "rate" in err_str.lower() or "resource_exhausted" in err_str.lower():
+            is_rate_limit = "429" in err_str or "quota" in err_str.lower() or "rate" in err_str.lower() or "resource_exhausted" in err_str.lower()
+            is_transient = "503" in err_str or "unavailable" in err_str.lower() or "high demand" in err_str.lower() or "internal" in err_str.lower()
+            if is_rate_limit or is_transient:
                 match = re.search(r"retry in (\d+(?:\.\d+)?)s", err_str)
                 delay = float(match.group(1)) + 3 if match else (default_wait * (attempt + 1))
-                print(f"\n[Rate Limit] Waiting {delay:.1f}s before retry (attempt {attempt+1}/{max_retries})...", flush=True)
+                print(f"\n[Retryable Error] Waiting {delay:.1f}s before retry (attempt {attempt+1}/{max_retries})...", flush=True)
                 time.sleep(delay)
             else:
                 raise e
@@ -47,7 +49,7 @@ def init_llm_client(preferred_model: Optional[str] = None):
             api_key=gemini_key,
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
         )
-        model = "gemini-3.5-flash"
+        model = "gemini-3.5-flash-lite"
         return client, model
 
     raise ValueError("Neither valid OPENAI_API_KEY nor GEMINI_API_KEY found.")
@@ -64,12 +66,26 @@ class ComplianceRAGPipeline:
             prefix = format_authority_header(meta, mode=mode)
             context_str += f"--- DOCUMENT {idx} ---\n{prefix}CONTENT: {doc['text']}\n\n"
 
-        system_instruction = (
+        base_instruction = (
             "You are an expert Indian Financial Compliance assistant. Answer the user query strictly "
-            "based on the provided document excerpts. If documents contradict each other, resolve the contradiction "
-            "by giving strict precedence to higher Authority Tiers (Tier 1 Regulator > Tier 3 Internal Policy) "
-            "and more recent issuance dates."
+            "based on the provided document excerpts."
         )
+
+        if mode == "naive":
+            system_instruction = base_instruction
+        elif mode == "recency_only":
+            system_instruction = base_instruction + (
+                " If documents contradict each other, resolve the contradiction by giving "
+                "precedence to the document with the more recent issuance date."
+            )
+        elif mode == "full":
+            system_instruction = base_instruction + (
+                " If documents contradict each other, resolve the contradiction by giving strict "
+                "precedence to higher Authority Tiers (Tier 1 Regulator > Tier 3 Internal Policy) "
+                "and more recent issuance dates."
+            )
+        else:
+            raise ValueError(f"Unknown mode: {mode}")
 
         user_prompt = f"CONTEXT:\n{context_str}\n\nQUERY: {query}\n\nANSWER:"
         return system_instruction, user_prompt
