@@ -9,6 +9,7 @@ if str(ROOT_DIR) not in sys.path:
 
 import json
 import time
+import hashlib
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -18,71 +19,26 @@ from src.parser import ComplianceChunk, RegulatoryMetadata
 from src.indexer import ComplianceVectorStore
 from src.pipelines import ComplianceRAGPipeline
 from src.evaluator import ComplianceEvaluator
+from src.benchmark_cases import BENCHMARK_CASES
 
-BENCHMARK_CASES = [
-    {
-        "id": "TC-01-COOLING-OFF-MIN",
-        "topic": "Cooling-Off Period Minimum Duration & Waiver",
-        "conflict_type": "Temporal Drift (RBI 2022 vs RBI 2025) & Authority (RBI Tier 1 vs Bank Tier 3)",
-        "query": "What is the minimum cooling-off period required for digital loans under RBI regulations, and can a borrower waive it at checkout for instant disbursement?",
-        "ground_truth": (
-            "Under the prevailing RBI Directions 2025 (RBI/2025-26/36, issued May 8, 2025, which repealed "
-            "the 2022 guidelines), the cooling-off period is determined by the Board of the RE in their loan policy, "
-            "subject to not being less than one day for all loans (the repealed 2022 rule of 3 days for loans >= 7 days "
-            "no longer applies). Furthermore, the cooling-off period cannot be waived by borrower instant checkbox consent; "
-            "statutory regulatory consumer protections override internal bank SOPs (Tier 3)."
-        )
-    },
-    {
-        "id": "TC-02-COOLING-OFF-FEE",
-        "topic": "Fee Retention Upon Cooling-Off Exit",
-        "conflict_type": "Temporal Drift (RBI 2022 vs RBI 2025)",
-        "query": "If a borrower exercises the cooling-off exit option on a digital loan, is the regulated entity permitted to retain any processing fee or administrative charge?",
-        "ground_truth": (
-            "Under the prevailing RBI Directions 2025 (RBI/2025-26/36, Chapter III, Para 10(ii)), the Regulated Entity "
-            "is explicitly permitted to retain a reasonable one-time processing fee if the customer exits during the cooling-off "
-            "period, provided it was disclosed upfront in the KFS. Under the repealed 2022 guidelines, exit was permitted by "
-            "paying principal and proportionate APR without penalty or fee retention."
-        )
-    },
-    {
-        "id": "TC-03-DLG-FLDG-CAP",
-        "topic": "Default Loss Guarantee (DLG / FLDG) Permissible Cap",
-        "conflict_type": "Authority Hierarchy (RBI Tier 1 vs Bank SOP Tier 3) & Temporal Drift",
-        "query": "What is the maximum permissible Default Loss Guarantee (DLG / FLDG) coverage that can be accepted from a Lending Service Provider (LSP)? Can a bank internal policy permit up to 10%?",
-        "ground_truth": (
-            "Under RBI Directions 2025 (Tier 1 Statutory Regulator, RBI/2025-26/36, Chapter VI, Para 20), "
-            "the total DLG cover across all portfolio arrangements shall not exceed 5.0% of the total disbursed loan portfolio. "
-            "An internal bank policy or SOP (Tier 3, such as Apex Bank SOP 2024 permitting 10%) is subordinate to RBI regulations "
-            "and legally void to the extent of the conflict. The cap remains strictly 5%."
-        )
-    },
-    {
-        "id": "TC-04-BIOMETRIC-STORAGE",
-        "topic": "Borrower Biometric Data Storage by LSPs",
-        "conflict_type": "Authority Hierarchy (RBI Tier 1 vs Bank SOP Tier 3)",
-        "query": "Are Digital Lending Apps or Lending Service Providers (LSPs) allowed to store or cache borrower biometric data such as fingerprints or authentication tokens on their servers?",
-        "ground_truth": (
-            "No. Under RBI Directions (Tier 1 Regulator), Regulated Entities and LSPs are strictly prohibited from "
-            "storing biometric data of borrowers under any circumstances. Internal Bank SOP provisions (Tier 3) "
-            "authorizing 90-day local caching are subordinate to and overridden by the statutory regulatory prohibition."
-        )
-    },
-    {
-        "id": "TC-05-CASH-RECOVERY-DELINQUENT",
-        "topic": "Physical Cash Recovery for Delinquent Digital Loans",
-        "conflict_type": "Temporal Drift (RBI 2022 vs RBI 2025)",
-        "query": "Is physical cash recovery allowed for digital loans in case of borrower delinquency, or must all payments strictly route through bank account to bank account?",
-        "ground_truth": (
-            "Under RBI Directions 2025 (RBI/2025-26/36, Chapter II, Para 4(v)), an operational flexibility exemption "
-            "is explicitly provided for delinquent loans: REs may deploy a physical interface to recover loans in cash "
-            "wherever necessary, exempt from the direct bank account repayment requirement, provided an official receipt is issued. "
-            "This updates the strict 2022 mandate where all disbursements and repayments had to be strictly account-to-account."
-        )
-    }
+MODES = ["naive", "recency_only", "full"]
+CATEGORIES = [
+    "AUTHORITY_CORRECT_RESOLUTION",
+    "FRANKENSTEIN_BLENDING",
+    "OUTDATED_RULE_SELECTED",
+    "PARAMETRIC_LEAKAGE",
 ]
+CASE_TYPES = ["temporal", "authority", "control"]
 
-def load_chunks(path="data/parsed_chunks/regulatory_chunks.json"):
+TOP_K = int(os.getenv("TOP_K", "15"))
+PACE = float(os.getenv("PACE_SECONDS", "3"))   # pause between API calls; raise if you hit rate limits
+
+CHUNKS_PATH = "data/parsed_chunks/regulatory_chunks.json"
+RESULTS_PATH = "results/experiment_results.json"
+META_PATH = "results/run_meta.json"
+
+
+def load_chunks(path=CHUNKS_PATH):
     with open(path, "r", encoding="utf-8") as f:
         raw = json.load(f)
     return [
@@ -94,68 +50,89 @@ def load_chunks(path="data/parsed_chunks/regulatory_chunks.json"):
         for c in raw
     ]
 
-def generate_markdown_report(summary: dict, detailed_results: list, out_path: str):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    modes = ["naive", "recency_only", "full"]
 
-    md = []
-    md.append("# Experimental Observations: Authority-Aware Contradiction Resolution in RAG")
-    md.append(f"**Execution Timestamp:** {timestamp}\n")
-    md.append("## 1. Research Question & Hypothesis")
-    md.append("> **Research Question:** Does giving the LLM source-recency and authority metadata reduce hallucination and contradiction errors when querying Indian financial compliance documents subject to regulatory drift?")
-    md.append("\n**Hypothesis:**")
-    md.append("1. **Naive RAG** will suffer from high rates of **Frankenstein Blending** (synthesizing contradictory rules into an ungrounded compromise) and **Outdated Rule Selection** (recommending repealed circulars).")
-    md.append("2. **Recency-Aware RAG** resolves purely temporal drift between older and newer regulator circulars, but fails when a subordinate document (e.g. Bank SOP Tier 3) is newer than an older regulatory circular.")
-    md.append("3. **Authority & Recency-Aware RAG (Full)** achieves the highest accuracy by correctly enforcing both the temporal order and statutory authority hierarchy (Tier 1 Regulator > Tier 3 Internal Bank Policy).\n")
+def sha(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()[:16]
 
-    md.append("## 2. Quantitative Summary Across Baselines\n")
-    md.append("| Baseline Mode | Authority Correct Resolution | Frankenstein Blending | Outdated Rule Selected | Parametric Leakage | Total Test Cases |")
-    md.append("|---|---|---|---|---|---|")
 
-    for mode in modes:
-        stats = summary[mode]
-        total = stats["total"]
-        acc = stats.get("AUTHORITY_CORRECT_RESOLUTION", 0)
-        fb = stats.get("FRANKENSTEIN_BLENDING", 0)
-        ors = stats.get("OUTDATED_RULE_SELECTED", 0)
-        pl = stats.get("PARAMETRIC_LEAKAGE", 0)
-        acc_pct = (acc / total * 100) if total else 0
-        fb_pct = (fb / total * 100) if total else 0
-        ors_pct = (ors / total * 100) if total else 0
-        pl_pct = (pl / total * 100) if total else 0
-        md.append(f"| **{mode.upper()}** | {acc}/{total} ({acc_pct:.1f}%) | {fb}/{total} ({fb_pct:.1f}%) | {ors}/{total} ({ors_pct:.1f}%) | {pl}/{total} ({pl_pct:.1f}%) | {total} |")
+def run_fingerprint(model_name: str) -> dict:
+    with open(CHUNKS_PATH, "rb") as f:
+        chunks_hash = sha(f.read())
+    cases_hash = sha(json.dumps(BENCHMARK_CASES, sort_keys=True).encode("utf-8"))
+    return {"model": model_name, "top_k": TOP_K, "chunks_sha": chunks_hash, "cases_sha": cases_hash}
 
-    md.append("\n## 3. Case-by-Case Qualitative Breakdown\n")
 
-    for idx, item in enumerate(detailed_results, start=1):
-        md.append(f"### Case {idx}: {item['topic']} (`{item['id']}`)")
-        md.append(f"**Query:** *{item['query']}*  ")
-        md.append(f"**Conflict Type:** {item['conflict_type']}  ")
-        md.append(f"**Ground Truth Resolution:**\n> {item['ground_truth']}\n")
+def empty_stats():
+    d = {"total": 0}
+    d.update({c: 0 for c in CATEGORIES})
+    return d
 
-        md.append("#### Comparative Pipeline Responses:\n")
-        for mode in modes:
-            if mode not in item["modes"]:
-                md.append(f"- **Mode: `{mode}`** - *(not yet run)*\n")
+
+def pct(n, d):
+    return (n / d * 100) if d else 0.0
+
+
+def build_summaries(results_by_id):
+    overall = {m: empty_stats() for m in MODES}
+    by_type = {m: {t: empty_stats() for t in CASE_TYPES} for m in MODES}
+    valid_ids = {tc["id"] for tc in BENCHMARK_CASES}
+    for cid, rec in results_by_id.items():
+        if cid not in valid_ids:
+            continue
+        ctype = rec.get("case_type", "temporal")
+        for m in MODES:
+            if m not in rec["modes"]:
                 continue
-            res_item = item["modes"][mode]
-            classification = res_item["eval"]["classification"]
-            reasoning = res_item["eval"]["reasoning"]
-            response_preview = res_item["response"].strip()
+            cls = rec["modes"][m]["eval"]["classification"]
+            for tgt in (overall[m], by_type[m][ctype]):
+                tgt["total"] += 1
+                tgt[cls] = tgt.get(cls, 0) + 1
+    return overall, by_type
 
-            badge = "✅" if classification == "AUTHORITY_CORRECT_RESOLUTION" else "❌"
-            md.append(f"- **Mode: `{mode}`** {badge} **Classification:** `{classification}`")
-            md.append(f"  - *Judge Reasoning:* {reasoning}")
-            md.append(f"  - *Model Output:* {response_preview}\n")
 
-    md.append("## 4. Key Findings & Empirical Observations\n")
-    md.append("1. **Naive RAG Failure Mode (Frankenstein Blending & Outdated Rules):** When dates and tiers are stripped, the LLM has no contextual anchor to determine validity. In cases with multiple rules (e.g. cooling off period of 1 day vs 3 days, or 5% vs 10% DLG), it blends both numbers into a compromise or erroneously selects the outdated rule.")
-    md.append("2. **Recency-Aware RAG Blindspot (Authority Inversion):** Recency metadata solves temporal drift between circulars of the same authority (RBI 2022 vs RBI 2025). However, if an internal bank policy was written in 2024, Recency-only RAG erroneously favors the 2024 Bank SOP over earlier RBI directives, causing a severe compliance violation.")
-    md.append("3. **Authority-Aware Resolution:** Providing structured authority tiers (Tier 1 Regulator vs Tier 3 Bank SOP) alongside recency timestamps completely eliminates Frankenstein Blending and forces the model to treat regulatory mandates as non-negotiable legal overrides.")
+def generate_markdown_report(overall, by_type, detailed_results, meta, out_path):
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    md = []
+    md.append("# Experimental Results: Authority-Aware Contradiction Resolution in RAG")
+    md.append(f"**Generated:** {ts}  ")
+    md.append(f"**Model:** `{meta['model']}`  |  **top_k:** {meta['top_k']}  |  **chunks:** `{meta['chunks_sha']}`  |  **cases:** `{meta['cases_sha']}`\n")
+    md.append("This file records raw outcomes only. Interpretation belongs in the paper.\n")
+
+    def table(title, rows):
+        md.append(f"## {title}\n")
+        md.append("| Condition | Correct | Frankenstein Blending | Outdated Rule Selected | Parametric Leakage | n |")
+        md.append("|---|---|---|---|---|---|")
+        for label, st in rows:
+            t = st["total"]
+            cells = " | ".join(f"{st[c]}/{t} ({pct(st[c], t):.1f}%)" for c in CATEGORIES)
+            md.append(f"| **{label}** | {cells} | {t} |")
+        md.append("")
+
+    table("1. Overall", [(m.upper(), overall[m]) for m in MODES])
+    for ct in CASE_TYPES:
+        table(f"2. Case type: {ct}", [(m.upper(), by_type[m][ct]) for m in MODES])
+
+    md.append("## 3. Case-by-case\n")
+    for idx, item in enumerate(detailed_results, start=1):
+        md.append(f"### {idx}. {item['topic']} (`{item['id']}`, {item.get('case_type', '?')})")
+        md.append(f"**Query:** *{item['query']}*  ")
+        md.append(f"**Conflict type:** {item['conflict_type']}  ")
+        md.append(f"**Ground truth:**\n> {item['ground_truth']}\n")
+        for m in MODES:
+            if m not in item["modes"]:
+                md.append(f"- **{m}**: *(not yet run)*\n")
+                continue
+            r = item["modes"][m]
+            cls = r["eval"]["classification"]
+            badge = "PASS" if cls == "AUTHORITY_CORRECT_RESOLUTION" else "FAIL"
+            md.append(f"- **{m}** [{badge}] `{cls}`")
+            md.append(f"  - *Judge:* {r['eval']['reasoning']}")
+            md.append(f"  - *Output:* {r['response'].strip()}\n")
 
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("\n".join(md))
     print(f"Report generated: {out_path}")
+
 
 def main():
     print("=" * 70)
@@ -174,29 +151,38 @@ def main():
     evaluator = ComplianceEvaluator()
     print(f"Pipeline & Evaluator initialized using model: {pipeline.model_name}")
 
-    modes = ["naive", "recency_only", "full"]
+    # ---- guard against mixing runs from different corpora / cases / models ----
+    meta = run_fingerprint(pipeline.model_name)
+    os.makedirs("results", exist_ok=True)
+    if os.path.exists(RESULTS_PATH):
+        if not os.path.exists(META_PATH):
+            sys.exit("\nresults/experiment_results.json exists from an older run (no run_meta.json).\n"
+                     "Delete results/*.json and re-run, so old and new results are never mixed.")
+        old_meta = json.load(open(META_PATH, encoding="utf-8"))
+        if old_meta != meta:
+            diff = {k: (old_meta.get(k), meta[k]) for k in meta if old_meta.get(k) != meta[k]}
+            sys.exit(f"\nSaved results were produced under a different setup: {diff}\n"
+                     "Delete results/*.json to start a clean run (or restore the previous setup to resume).")
+    json.dump(meta, open(META_PATH, "w", encoding="utf-8"), indent=2)
 
-    # Load existing results (case-by-case, mode-by-mode) if present
     results_by_id = {}
-    if os.path.exists("results/experiment_results.json"):
-        with open("results/experiment_results.json", "r", encoding="utf-8") as f:
-            existing = json.load(f)
-        for r in existing:
+    if os.path.exists(RESULTS_PATH):
+        for r in json.load(open(RESULTS_PATH, encoding="utf-8")):
             results_by_id[r["id"]] = r
         print(f"Loaded existing progress for {len(results_by_id)} case(s).")
 
     def save_progress():
-        os.makedirs("results", exist_ok=True)
         ordered = [results_by_id[tc["id"]] for tc in BENCHMARK_CASES if tc["id"] in results_by_id]
-        with open("results/experiment_results.json", "w", encoding="utf-8") as f:
+        with open(RESULTS_PATH, "w", encoding="utf-8") as f:
             json.dump(ordered, f, indent=2)
 
-    print(f"\nRunning benchmark suite ({len(BENCHMARK_CASES)} test cases x {len(modes)} modes)...")
+    print(f"\nRunning benchmark suite ({len(BENCHMARK_CASES)} cases x {len(MODES)} modes), top_k={TOP_K}, pace={PACE}s")
 
     for tc in BENCHMARK_CASES:
         if tc["id"] not in results_by_id:
             results_by_id[tc["id"]] = {
                 "id": tc["id"],
+                "case_type": tc["case_type"],
                 "topic": tc["topic"],
                 "conflict_type": tc["conflict_type"],
                 "query": tc["query"],
@@ -205,20 +191,18 @@ def main():
             }
         case_record = results_by_id[tc["id"]]
 
-        print(f"\n[Case {tc['id']}] {tc['topic']}")
-        print(f"Query: {tc['query']}")
+        print(f"\n[{tc['id']}] ({tc['case_type']}) {tc['topic']}")
 
-        for mode in modes:
+        for mode in MODES:
             if mode in case_record["modes"]:
-                print(f"  Mode: {mode} already done, skipping")
+                print(f"  {mode}: already done, skipping")
                 continue
 
-            print(f"  Running mode: {mode}...", end="", flush=True)
+            print(f"  {mode}...", end="", flush=True)
             t0 = time.time()
-            res = pipeline.run(query=tc["query"], top_k=15, mode=mode)
+            res = pipeline.run(query=tc["query"], top_k=TOP_K, mode=mode)
             gen_latency = time.time() - t0
-
-            time.sleep(35)
+            time.sleep(PACE)
 
             t_eval = time.time()
             eval_res = evaluator.evaluate_response(
@@ -227,56 +211,40 @@ def main():
                 generated_response=res["response"]
             )
             eval_latency = time.time() - t_eval
-            total_latency = gen_latency + eval_latency
 
+            docs = res["retrieved_docs"]
             case_record["modes"][mode] = {
                 "response": res["response"],
-                "latency_sec": round(total_latency, 2),
+                "latency_sec": round(gen_latency + eval_latency, 2),
                 "eval": eval_res,
-                "retrieved_doc_ids": [d["metadata"]["doc_id"] for d in res["retrieved_docs"]]
+                "retrieved_doc_ids": [d["metadata"]["doc_id"] for d in docs],
+                "retrieved_chunk_ids": [d["id"] for d in docs] if docs and "id" in docs[0] else []
             }
-            print(f" -> {eval_res.get('classification')} (gen: {gen_latency:.1f}s, eval: {eval_latency:.1f}s)")
-
+            print(f" -> {eval_res.get('classification')} (gen {gen_latency:.1f}s, eval {eval_latency:.1f}s)")
             save_progress()
+            time.sleep(PACE)
 
-            time.sleep(40)
-
-    summary_stats = {
-        m: {
-            "total": 0,
-            "AUTHORITY_CORRECT_RESOLUTION": 0,
-            "FRANKENSTEIN_BLENDING": 0,
-            "OUTDATED_RULE_SELECTED": 0,
-            "PARAMETRIC_LEAKAGE": 0
-        }
-        for m in modes
-    }
-    for case_record in results_by_id.values():
-        for mode in modes:
-            if mode in case_record["modes"]:
-                classification = case_record["modes"][mode]["eval"]["classification"]
-                summary_stats[mode]["total"] += 1
-                summary_stats[mode][classification] = summary_stats[mode].get(classification, 0) + 1
-
+    overall, by_type = build_summaries(results_by_id)
     with open("results/evaluation_summary.json", "w", encoding="utf-8") as f:
-        json.dump(summary_stats, f, indent=2)
+        json.dump(overall, f, indent=2)
+    with open("results/evaluation_by_type.json", "w", encoding="utf-8") as f:
+        json.dump(by_type, f, indent=2)
 
-    results_detailed = [results_by_id[tc["id"]] for tc in BENCHMARK_CASES if tc["id"] in results_by_id]
-    generate_markdown_report(summary_stats, results_detailed, "results/OBSERVATIONS.md")
+    detailed = [results_by_id[tc["id"]] for tc in BENCHMARK_CASES if tc["id"] in results_by_id]
+    generate_markdown_report(overall, by_type, detailed, meta, "results/OBSERVATIONS.md")
 
     print("\n" + "=" * 70)
-    print("EXPERIMENT EXECUTION COMPLETE (or paused - re-run to continue)")
+    print("EXPERIMENT COMPLETE (or paused - re-run the same command to continue)")
     print("=" * 70)
-    print("\nQuantitative Summary:")
-    for mode in modes:
-        st = summary_stats[mode]
-        acc = (st['AUTHORITY_CORRECT_RESOLUTION'] / st['total'] * 100) if st['total'] else 0
-        print(f"  Mode: {mode.upper():<14} | Correct: {st['AUTHORITY_CORRECT_RESOLUTION']}/{st['total']} ({acc:.1f}%) | Frankenstein: {st['FRANKENSTEIN_BLENDING']} | Outdated: {st['OUTDATED_RULE_SELECTED']} | Parametric: {st['PARAMETRIC_LEAKAGE']}")
+    for m in MODES:
+        st = overall[m]
+        print(f"  {m.upper():<13} correct {st['AUTHORITY_CORRECT_RESOLUTION']}/{st['total']} ({pct(st['AUTHORITY_CORRECT_RESOLUTION'], st['total']):.1f}%)"
+              f" | blend {st['FRANKENSTEIN_BLENDING']} | outdated {st['OUTDATED_RULE_SELECTED']} | parametric {st['PARAMETRIC_LEAKAGE']}")
+    print("\nBy case type (correct / n):")
+    for ct in CASE_TYPES:
+        row = "  ".join(f"{m}: {by_type[m][ct]['AUTHORITY_CORRECT_RESOLUTION']}/{by_type[m][ct]['total']}" for m in MODES)
+        print(f"  {ct:<10} {row}")
 
-    print(f"\nResults saved to:")
-    print("  - results/experiment_results.json")
-    print("  - results/evaluation_summary.json")
-    print("  - results/OBSERVATIONS.md")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,23 @@
+{
+  "naive": {
+    "total": 17,
+    "AUTHORITY_CORRECT_RESOLUTION": 9,
+    "FRANKENSTEIN_BLENDING": 4,
+    "OUTDATED_RULE_SELECTED": 4,
+    "PARAMETRIC_LEAKAGE": 0
+  },
+  "recency_only": {
+    "total": 17,
+    "AUTHORITY_CORRECT_RESOLUTION": 12,
+    "FRANKENSTEIN_BLENDING": 1,
+    "OUTDATED_RULE_SELECTED": 3,
+    "PARAMETRIC_LEAKAGE": 1
+  },
+  "full": {
+    "total": 17,
+    "AUTHORITY_CORRECT_RESOLUTION": 15,
+    "FRANKENSTEIN_BLENDING": 0,
+    "OUTDATED_RULE_SELECTED": 2,
+    "PARAMETRIC_LEAKAGE": 0
+  }
+}

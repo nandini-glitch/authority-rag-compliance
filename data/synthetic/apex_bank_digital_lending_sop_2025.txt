@@ -1,0 +1,25 @@
+APEX COMMERCIAL BANK LIMITED
+POLICY DOCUMENT & STANDARD OPERATING PROCEDURE (SOP)
+DOCUMENT NO: ACB/POL/DL/2025-26/07
+DATE OF ISSUANCE: September 15, 2025
+SUBJECT: Internal Operational Policy for Digital Lending and FinTech Partnerships
+1. Scope and Applicability
+This Policy governs digital lending sourcing, underwriting, disbursements, servicing, and collections across all Digital Lending Applications (DLAs) operated by Apex Commercial Bank or its partnered Lending Service Providers (LSPs).
+2. Cooling-Off Window
+2.1. The cooling-off period for digital retail loans disbursed through partnered DLAs shall be 7 (seven) days from the date of loan disbursal.
+2.2. If a borrower exits during the cooling-off period, the Bank shall refund all processing charges except a one-time administrative fee of Rs. 500, which is disclosed to the borrower in the Key Fact Statement.
+3. Default Loss Guarantee (DLG) / First Loss Default Guarantee (FLDG)
+3.1. Under strategic FinTech partnerships, the Bank is permitted to accept Default Loss Guarantee (DLG) / First Loss Default Guarantee (FLDG) from corporate LSP partners.
+3.2. Portfolio Cap: For high-yield digital unsecured portfolios sourced via Category-A LSPs, the Bank's Credit Risk Committee may approve DLG coverage agreements covering up to 10% (ten percent) of the total disbursed portfolio.
+3.3. Forms of DLG: The DLG may be accepted in the form of corporate bank guarantees, escrowed cash deposits, or contractual letters of comfort issued by the LSP's parent holding entity.
+3.4. DLG Invocation: The Bank may invoke the DLG cover once a loan in the guaranteed portfolio has remained overdue for 180 (one hundred eighty) days.
+4. Data Privacy, Customer Consent and Biometric Storage
+4.1. Device Permissions: With the borrower's in-app consent at onboarding, DLAs may access the borrower's contact list and call logs to support credit scoring and collections follow-up.
+4.2. Biometric Token Caching: In order to streamline recurring re-authentication and reduce API latency, encrypted biometric authentication tokens and fingerprint minutiae data may be temporarily stored on secured, audited servers of partnered LSPs for up to 90 (ninety) days.
+4.3. Offshore Processing: Where borrower data is processed on cloud infrastructure located outside India, the processed data may be retained on such offshore servers for up to 7 (seven) days before it is transferred back to servers in India.
+5. Collections and Delinquent Loan Recovery
+5.1. All primary repayments shall be routed through electronic mandates (e-NACH/UPI AutoPay).
+5.2. Cash Recovery by LSPs: In cases where borrower accounts are in delinquency (>30 days past due) and digital recovery attempts have failed, authorized recovery agents of the LSP may collect physical cash from borrowers at their residence against physical bank receipts.
+5.3. Collection Fee: The LSP may deduct a collection facilitation fee of 2% (two percent) from the amount recovered in cash and remit the balance to the Bank.
+6. Credit Limit Management
+6.1. For borrowers with satisfactory repayment history, the credit limit on a digital loan product may be increased automatically every six months, with intimation to the borrower by SMS.

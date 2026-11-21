@@ -5,8 +5,10 @@ from pypdf import PdfReader
 from typing import List, Dict, Any
 
 RAW_DIR = "data/raw_pdfs"
+SYNTH_DIR = "data/synthetic"   # constructed documents; committed to git (unlike raw_pdfs)
 PARSED_DIR = "data/parsed_chunks"
 os.makedirs(RAW_DIR, exist_ok=True)
+os.makedirs(SYNTH_DIR, exist_ok=True)
 os.makedirs(PARSED_DIR, exist_ok=True)
 
 DOCUMENT_SOURCES = [
@@ -39,14 +41,14 @@ DOCUMENT_SOURCES = [
         "superseded_by": ""
     },
     {
-        "doc_id": "ACB/POL/DL/2024-25/04",
-        "title": "Apex Commercial Bank - Internal SOP for Digital Lending 2024",
+        "doc_id": "ACB/POL/DL/2025-26/07",
+        "title": "Apex Commercial Bank - Internal SOP for Digital Lending 2025",
         "url": "",
-        "filename": "bank_internal_digital_lending_policy_2024.txt",
+        "filename": "apex_bank_digital_lending_sop_2025.txt",
         "issuer": "Apex Commercial Bank (Internal Policy)",
         "authority_tier": 3,
         "doc_type": "Internal Policy",
-        "date_issued": "2024-04-15",
+        "date_issued": "2025-09-15",
         "status": "internal_active",
         "topic": "Digital Lending",
         "is_repealed": False,
@@ -96,7 +98,8 @@ def extract_text_chunks(chunk_size: int = 800, chunk_overlap: int = 100) -> List
     step = max(50, chunk_size - chunk_overlap)
 
     for item in DOCUMENT_SOURCES:
-        doc_path = os.path.join(RAW_DIR, item["filename"])
+        base_dir = SYNTH_DIR if item["filename"].endswith(".txt") else RAW_DIR
+        doc_path = os.path.join(base_dir, item["filename"])
         if not os.path.exists(doc_path):
             print(f"Skipping {item['filename']} (file does not exist)")
             continue
