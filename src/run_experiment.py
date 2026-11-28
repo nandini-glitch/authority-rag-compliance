@@ -20,6 +20,7 @@ from src.indexer import ComplianceVectorStore
 from src.pipelines import ComplianceRAGPipeline
 from src.evaluator import ComplianceEvaluator
 from src.benchmark_cases import BENCHMARK_CASES
+from src.oracle import OracleStore
 
 MODES = ["naive", "recency_only", "full"]
 CATEGORIES = [
@@ -32,10 +33,13 @@ CASE_TYPES = ["temporal", "authority", "control"]
 
 TOP_K = int(os.getenv("TOP_K", "15"))
 PACE = float(os.getenv("PACE_SECONDS", "3"))   # pause between API calls; raise if you hit rate limits
+RETRIEVAL_MODE = os.getenv("RETRIEVAL_MODE", "standard")   # "standard" (vector retrieval) or "oracle" (gold evidence chunks)
+assert RETRIEVAL_MODE in ("standard", "oracle"), RETRIEVAL_MODE
+RESULTS_DIR = "results" if RETRIEVAL_MODE == "standard" else "results/oracle"
 
 CHUNKS_PATH = "data/parsed_chunks/regulatory_chunks.json"
-RESULTS_PATH = "results/experiment_results.json"
-META_PATH = "results/run_meta.json"
+RESULTS_PATH = f"{RESULTS_DIR}/experiment_results.json"
+META_PATH = f"{RESULTS_DIR}/run_meta.json"
 
 
 def load_chunks(path=CHUNKS_PATH):
@@ -59,7 +63,7 @@ def run_fingerprint(model_name: str) -> dict:
     with open(CHUNKS_PATH, "rb") as f:
         chunks_hash = sha(f.read())
     cases_hash = sha(json.dumps(BENCHMARK_CASES, sort_keys=True).encode("utf-8"))
-    return {"model": model_name, "top_k": TOP_K, "chunks_sha": chunks_hash, "cases_sha": cases_hash}
+    return {"model": model_name, "retrieval_mode": RETRIEVAL_MODE, "top_k": TOP_K, "chunks_sha": chunks_hash, "cases_sha": cases_hash}
 
 
 def empty_stats():
@@ -95,7 +99,7 @@ def generate_markdown_report(overall, by_type, detailed_results, meta, out_path)
     md = []
     md.append("# Experimental Results: Authority-Aware Contradiction Resolution in RAG")
     md.append(f"**Generated:** {ts}  ")
-    md.append(f"**Model:** `{meta['model']}`  |  **top_k:** {meta['top_k']}  |  **chunks:** `{meta['chunks_sha']}`  |  **cases:** `{meta['cases_sha']}`\n")
+    md.append(f"**Model:** `{meta['model']}`  |  **retrieval:** {meta['retrieval_mode']}  |  **top_k:** {meta['top_k']}  |  **chunks:** `{meta['chunks_sha']}`  |  **cases:** `{meta['cases_sha']}`\n")
     md.append("This file records raw outcomes only. Interpretation belongs in the paper.\n")
 
     def table(title, rows):
@@ -142,10 +146,15 @@ def main():
     chunks = load_chunks()
     print(f"Loaded {len(chunks)} parsed compliance chunks.")
 
-    store = ComplianceVectorStore()
-    store.reset()
-    store.add_chunks(chunks)
-    print(f"Indexed {store.collection.count()} chunks into ChromaDB.")
+    if RETRIEVAL_MODE == "oracle":
+        raw_chunks = json.load(open(CHUNKS_PATH, encoding="utf-8"))
+        store = OracleStore(BENCHMARK_CASES, raw_chunks)
+        print("ORACLE mode: gold evidence chunks are supplied directly (no retrieval).")
+    else:
+        store = ComplianceVectorStore()
+        store.reset()
+        store.add_chunks(chunks)
+        print(f"Indexed {store.collection.count()} chunks into ChromaDB.")
 
     pipeline = ComplianceRAGPipeline(vector_store=store)
     evaluator = ComplianceEvaluator()
@@ -153,7 +162,7 @@ def main():
 
     # ---- guard against mixing runs from different corpora / cases / models ----
     meta = run_fingerprint(pipeline.model_name)
-    os.makedirs("results", exist_ok=True)
+    os.makedirs(RESULTS_DIR, exist_ok=True)
     if os.path.exists(RESULTS_PATH):
         if not os.path.exists(META_PATH):
             sys.exit("\nresults/experiment_results.json exists from an older run (no run_meta.json).\n"
@@ -225,13 +234,13 @@ def main():
             time.sleep(PACE)
 
     overall, by_type = build_summaries(results_by_id)
-    with open("results/evaluation_summary.json", "w", encoding="utf-8") as f:
+    with open(f"{RESULTS_DIR}/evaluation_summary.json", "w", encoding="utf-8") as f:
         json.dump(overall, f, indent=2)
-    with open("results/evaluation_by_type.json", "w", encoding="utf-8") as f:
+    with open(f"{RESULTS_DIR}/evaluation_by_type.json", "w", encoding="utf-8") as f:
         json.dump(by_type, f, indent=2)
 
     detailed = [results_by_id[tc["id"]] for tc in BENCHMARK_CASES if tc["id"] in results_by_id]
-    generate_markdown_report(overall, by_type, detailed, meta, "results/OBSERVATIONS.md")
+    generate_markdown_report(overall, by_type, detailed, meta, f"{RESULTS_DIR}/OBSERVATIONS.md")
 
     print("\n" + "=" * 70)
     print("EXPERIMENT COMPLETE (or paused - re-run the same command to continue)")

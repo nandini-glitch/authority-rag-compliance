@@ -11,6 +11,7 @@ Usage: python -m src.analyze_results
 """
 import csv
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -21,6 +22,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from src.benchmark_cases import BENCHMARK_CASES
 
+RESULTS_DIR = "results/oracle" if os.getenv("RETRIEVAL_MODE") == "oracle" else "results"
 MODES = ["naive", "recency_only", "full"]
 CODE = {"AUTHORITY_CORRECT_RESOLUTION": "OK", "FRANKENSTEIN_BLENDING": "BLEND",
         "OUTDATED_RULE_SELECTED": "OUTD", "PARAMETRIC_LEAKAGE": "PARAM"}
@@ -33,7 +35,7 @@ def norm(s):
 
 def main():
     chunks = json.load(open("data/parsed_chunks/regulatory_chunks.json", encoding="utf-8"))
-    results = {r["id"]: r for r in json.load(open("results/experiment_results.json", encoding="utf-8"))}
+    results = {r["id"]: r for r in json.load(open(f"{RESULTS_DIR}/experiment_results.json", encoding="utf-8"))}
 
     rows = []
     print(f"{'case':<32}{'type':<10}{'naive':<8}{'recency':<9}{'full':<8}{'evidence retrieved'}")
@@ -59,11 +61,11 @@ def main():
         print(f"{tc['id']:<32}{tc['case_type']:<10}{codes[0]:<8}{codes[1]:<9}{codes[2]:<8}{ev}")
         rows.append([tc["id"], tc["case_type"], *codes, ev])
 
-    with open("results/case_level.csv", "w", newline="") as f:
+    with open(f"{RESULTS_DIR}/case_level.csv", "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["id", "case_type", "naive", "recency_only", "full", "evidence_retrieved"])
         w.writerows(rows)
-    print("\nWrote results/case_level.csv")
+    print(f"\nWrote {RESULTS_DIR}/case_level.csv")
 
     print("\n" + "=" * 85)
     print("FULL-MODE FAILURES")

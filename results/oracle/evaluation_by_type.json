@@ -1,0 +1,71 @@
+{
+  "naive": {
+    "temporal": {
+      "total": 7,
+      "AUTHORITY_CORRECT_RESOLUTION": 5,
+      "FRANKENSTEIN_BLENDING": 1,
+      "OUTDATED_RULE_SELECTED": 1,
+      "PARAMETRIC_LEAKAGE": 0
+    },
+    "authority": {
+      "total": 8,
+      "AUTHORITY_CORRECT_RESOLUTION": 0,
+      "FRANKENSTEIN_BLENDING": 8,
+      "OUTDATED_RULE_SELECTED": 0,
+      "PARAMETRIC_LEAKAGE": 0
+    },
+    "control": {
+      "total": 2,
+      "AUTHORITY_CORRECT_RESOLUTION": 2,
+      "FRANKENSTEIN_BLENDING": 0,
+      "OUTDATED_RULE_SELECTED": 0,
+      "PARAMETRIC_LEAKAGE": 0
+    }
+  },
+  "recency_only": {
+    "temporal": {
+      "total": 7,
+      "AUTHORITY_CORRECT_RESOLUTION": 7,
+      "FRANKENSTEIN_BLENDING": 0,
+      "OUTDATED_RULE_SELECTED": 0,
+      "PARAMETRIC_LEAKAGE": 0
+    },
+    "authority": {
+      "total": 8,
+      "AUTHORITY_CORRECT_RESOLUTION": 1,
+      "FRANKENSTEIN_BLENDING": 0,
+      "OUTDATED_RULE_SELECTED": 7,
+      "PARAMETRIC_LEAKAGE": 0
+    },
+    "control": {
+      "total": 2,
+      "AUTHORITY_CORRECT_RESOLUTION": 2,
+      "FRANKENSTEIN_BLENDING": 0,
+      "OUTDATED_RULE_SELECTED": 0,
+      "PARAMETRIC_LEAKAGE": 0
+    }
+  },
+  "full": {
+    "temporal": {
+      "total": 7,
+      "AUTHORITY_CORRECT_RESOLUTION": 7,
+      "FRANKENSTEIN_BLENDING": 0,
+      "OUTDATED_RULE_SELECTED": 0,
+      "PARAMETRIC_LEAKAGE": 0
+    },
+    "authority": {
+      "total": 8,
+      "AUTHORITY_CORRECT_RESOLUTION": 8,
+      "FRANKENSTEIN_BLENDING": 0,
+      "OUTDATED_RULE_SELECTED": 0,
+      "PARAMETRIC_LEAKAGE": 0
+    },
+    "control": {
+      "total": 2,
+      "AUTHORITY_CORRECT_RESOLUTION": 2,
+      "FRANKENSTEIN_BLENDING": 0,
+      "OUTDATED_RULE_SELECTED": 0,
+      "PARAMETRIC_LEAKAGE": 0
+    }
+  }
+}

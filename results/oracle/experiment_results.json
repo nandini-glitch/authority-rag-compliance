@@ -1,0 +1,994 @@
+[
+  {
+    "id": "T01-COOLING-OFF-MIN",
+    "case_type": "temporal",
+    "topic": "Minimum cooling-off period",
+    "conflict_type": "Temporal drift (RBI 2022 repealed vs RBI 2025 current)",
+    "query": "What is the minimum cooling-off period that a digital loan borrower must be given under RBI regulations?",
+    "ground_truth": "Under the RBI Digital Lending Directions, 2025 (Para 10(i)), the cooling-off period is determined by the Board of the regulated entity in its loan policy, subject to the period not being less than one day. The repealed 2022 Guidelines (Para 8) required not less than three days for loans of tenor seven days or more and one day for loans of tenor below seven days; that rule no longer applies. The current regulatory minimum is one day.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, the minimum cooling-off period depends on the tenor of the loan:\n\n* For loans having a tenor of **seven days or more**, the cooling-off period shall **not be less than three days**.\n* For loans having a tenor of **less than seven days**, the cooling-off period shall **not be less than one day** (or simply not less than one day, as also noted in Document 2).",
+        "latency_sec": 40.52,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The model erroneously selected the older 2022 guidelines requiring a 3-day cooling-off period for loans over seven days, ignoring the current 2025 RBI regulation where the minimum is universally one day. Therefore, it failed to prioritize the updated rules correctly."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2022-23/111",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2022-23_111_chunk_16",
+          "RBI_2025-26_36_chunk_28"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the minimum cooling-off period. Following the instruction to give precedence to the document with the more recent issuance date (Document 2, issued on 2025-05-08), the minimum cooling-off period is as follows:\n\n* The cooling-off period determined by the Board of the RE shall not be less than **one day**.",
+        "latency_sec": 76.41,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly followed the instruction to give precedence to the more recent document, accurately identifying that the current regulatory minimum cooling-off period is one day under the 2025 guidelines. It successfully avoided selecting the outdated rules from the older guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2022-23/111",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2022-23_111_chunk_16",
+          "RBI_2025-26_36_chunk_28"
+        ]
+      },
+      "full": {
+        "response": "Based on the current RBI regulations (Document 2, issued on 2025-05-08, which repeals Document 1), the cooling-off period shall be determined by the Board of the RE as laid down in their loan policy, subject to the period so determined **not being less than one day**.",
+        "latency_sec": 7.11,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified and applied the updated RBI regulations, prioritizing the current rule that sets the minimum cooling-off period to not less than one day as determined by the Board. It successfully avoided using the repealed older guidelines from previous tiers."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2022-23/111",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2022-23_111_chunk_16",
+          "RBI_2025-26_36_chunk_28"
+        ]
+      }
+    }
+  },
+  {
+    "id": "T02-EXIT-FEE",
+    "case_type": "temporal",
+    "topic": "Fee retention on cooling-off exit",
+    "conflict_type": "Temporal drift (RBI 2022 repealed vs RBI 2025 current)",
+    "query": "If a borrower exits a digital loan during the cooling-off period, can the lender retain any processing fee?",
+    "ground_truth": "Under the 2025 Directions (Para 10(ii)), the regulated entity may retain a reasonable one-time processing fee if the customer exits during the cooling-off period, provided it is disclosed to the customer upfront in the Key Fact Statement. The repealed 2022 Guidelines (Para 8) allowed exit by paying the principal and the proportionate APR without any penalty and contained no provision permitting retention of a processing fee.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, the Regulated Entity (RE) may retain a reasonable one-time processing fee if the customer exits the loan during the cooling-off period (as mentioned in Document 1, Section 10(ii)).",
+        "latency_sec": 3.11,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the newer 2025 Directions, which allow regulated entities to retain a reasonable one-time processing fee during the cooling-off period. It successfully prioritized the current regulatory standard over the repealed 2022 guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "RBI_2022-23_111_chunk_16"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the retention of a processing fee, which is resolved by giving precedence to the more recent document (Document 1, issued on 2025-05-08):\n\n* **According to the more recent document (Document 1, issued on 2025-05-08):** The RE (Regulated Entity) **may retain** a reasonable one-time processing fee if the customer exits the loan during the cooling-off period.",
+        "latency_sec": 7.48,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the principle of lex posterior by giving precedence to the newer 2025 document over the repealed 2022 guidelines. It accurately identified that the regulated entity may retain a reasonable one-time processing fee according to the updated regulation."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "RBI_2022-23_111_chunk_16"
+        ]
+      },
+      "full": {
+        "response": "Based on the current directions (RBI/2025-26/36, issued on 2025-05-08), the Regulated Entity (RE) may retain a reasonable one-time processing fee if the customer exits the loan during the cooling-off period.",
+        "latency_sec": 8.33,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the 2025 Directions allowing the lender to retain a reasonable one-time processing fee during the cooling-off period. It successfully prioritized the current, newer regulatory standard over the repealed 2022 guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "RBI_2022-23_111_chunk_16"
+        ]
+      }
+    }
+  },
+  {
+    "id": "T03-GRIEVANCE-ESCALATION",
+    "case_type": "temporal",
+    "topic": "Escalation of complaints to RBI CMS",
+    "conflict_type": "Temporal drift (RBI 2022 repealed vs RBI 2025 current)",
+    "query": "Under what conditions can a borrower escalate a digital lending complaint to the RBI Complaint Management System?",
+    "ground_truth": "Under the 2025 Directions (Para 11(iv)), a borrower can escalate to the RBI Complaint Management System (RB-IOS) if the complaint is rejected wholly or partly by the regulated entity, if the borrower is not satisfied with the reply, or if no reply is received within 30 days of the entity receiving the complaint; a physical complaint may instead be sent to the Centralised Receipt and Processing Centre, Chandigarh. The repealed 2022 Guidelines (Para 6.2) allowed escalation only where the complaint was not resolved within the stipulated period (then 30 days).",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, a borrower can escalate a complaint (lodged against the RE or the LSP engaged by the RE) to the RBI Complaint Management System (CMS) portal under the Reserve Bank - Integrated Ombudsman Scheme (RB-IOS) under any of the following conditions:\n\n1. The complaint is rejected wholly or partly by the RE.\n2. The borrower is not satisfied with the reply received from the RE.\n3. The borrower has not received any reply within 30 days of the receipt of the complaint by the RE (or within the stipulated period of 30 days).",
+        "latency_sec": 23.28,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified the current conditions for escalation to the RBI Complaint Management System under the 2025 Directions, matching the ground truth. It successfully included all valid scenarios such as rejection, dissatisfaction, and the 30-day non-response period."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_30",
+          "RBI_2025-26_36_chunk_31",
+          "RBI_2022-23_111_chunk_14"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, a borrower can lodge a complaint over the Complaint Management System (CMS) portal under the Reserve Bank-Integrated Ombudsman Scheme (RB-IOS) or send a physical complaint to the Centralised Receipt and Processing Centre under the following conditions:\n\n1. The complaint lodged by the borrower against the Regulated Entity (RE) or the Lending Service Provider (LSP) engaged by the RE is rejected wholly or partly by the RE; **or**\n2. The borrower is not satisfied with the reply received from the RE; **or**\n3. The borrower has not received any reply within 30 days of the receipt of the complaint by the RE.",
+        "latency_sec": 9.76,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified and applied the updated 2025 Directions, incorporating all the valid escalation conditions (rejection, dissatisfaction, and the 30-day non-response rule). It successfully prioritized the current regulatory framework over the repealed 2022 guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_30",
+          "RBI_2025-26_36_chunk_31",
+          "RBI_2022-23_111_chunk_14"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, a borrower can lodge a complaint over the Complaint Management System (CMS) portal under the Reserve Bank - Integrated Ombudsman Scheme (RB-IOS) under any of the following conditions:\n\n1. The complaint lodged by the borrower against the Regulated Entity (RE) or the Lending Service Provider (LSP) engaged by the RE is rejected wholly or partly by the RE;\n2. The borrower is not satisfied with the reply received from the RE; or\n3. The borrower has not received any reply within 30 days of the receipt of the complaint by the RE.",
+        "latency_sec": 9.42,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the current 2025 regulatory framework conditions for escalating complaints to the RBI Complaint Management System, mirroring the ground truth's accurate prioritization of the latest directions. It captured all three valid escalation triggers (rejection, dissatisfaction, and lack of response within 30 days) without relying on the repealed guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_30",
+          "RBI_2025-26_36_chunk_31",
+          "RBI_2022-23_111_chunk_14"
+        ]
+      }
+    }
+  },
+  {
+    "id": "T04-RECOVERY-AGENT-DISCLOSURE",
+    "case_type": "temporal",
+    "topic": "Recovery agent disclosure timing",
+    "conflict_type": "Temporal drift (RBI 2022 repealed vs RBI 2025 current)",
+    "query": "When must a borrower be told the details of the recovery agent who is authorised to approach them?",
+    "ground_truth": "Under the 2025 Directions (Para 8(v)), in case of loan default, when a recovery agent is assigned or changed, the particulars of the authorised recovery agent must be communicated to the borrower through email/SMS before the recovery agent contacts the borrower. The repealed 2022 Guidelines (Para 5.6) required the details to be communicated at the time of sanctioning the loan and at the time of passing recovery responsibility to an LSP or changing the LSP responsible for recovery.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, a borrower must be informed of the details of the recovery agent (or LSP acting as a recovery agent) authorised to approach them at the following times:\n\n1. **At the time of sanctioning of the loan** (Document 2, Section 5.6).\n2. **At the time of passing on the recovery responsibilities to an LSP or when there is a change in the LSP** responsible for recovery (Document 2, Section 5.6). Additionally, these particulars must be communicated to the borrower **through email/SMS before the recovery agent contacts the borrower** for recovery (Document 1, Section 8).",
+        "latency_sec": 3.85,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model combined the requirements from both the repealed 2022 Guidelines and the 2025 Directions instead of recognizing that the newer 2025 rules supersede the older ones. This resulted in a false compromise that cites mutually exclusive timelines from different regulatory tiers."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_24",
+          "RBI_2022-23_111_chunk_12"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a difference in the timing of when the details must be communicated, with Document 1 being the more recent issuance date (2025-05-08) compared to Document 2 (2022-09-02). \n\nGiving precedence to the more recent document (Document 1), the particulars of the recovery agent authorized to approach the borrower shall be communicated **through email/SMS before the recovery agent contacts the borrower for recovery** (this applies when initial recovery is initiated or when there is a change in the recovery agent already assigned). \n\n*(Note: Document 2 previously stated that this communication should happen at the time of sanctioning the loan and also at the time of passing on recovery responsibilities, but this has been superseded by the later guidance).*",
+        "latency_sec": 5.62,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly prioritized the more recent 2025 directions over the outdated 2022 guidelines. It accurately identified that the new rule requires communicating recovery agent details via email or SMS before the agent contacts the borrower."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_24",
+          "RBI_2022-23_111_chunk_12"
+        ]
+      },
+      "full": {
+        "response": "Based on the current regulatory directions (RBI/2025-26/36, issued on 2025-05-08), the particulars of the recovery agent authorized to approach the borrower for recovery must be communicated to the borrower through email/SMS **before the recovery agent contacts the borrower for recovery**, in cases where a recovery agent is assigned for the first time or there is a change in the recovery agent already assigned.",
+        "latency_sec": 5.63,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified and applied the current 2025 regulatory standard, which mandates communicating recovery agent details via email or SMS before contact, rather than relying on the repealed 2022 guidelines. It successfully prioritized the newer, higher-authority rule over outdated requirements."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_24",
+          "RBI_2022-23_111_chunk_12"
+        ]
+      }
+    }
+  },
+  {
+    "id": "T05-CASH-RECOVERY",
+    "case_type": "temporal",
+    "topic": "Cash recovery for delinquent loans",
+    "conflict_type": "Temporal drift (RBI 2022 repealed vs RBI 2025 current)",
+    "query": "Is physical cash recovery allowed for delinquent digital loans, or must all repayments go through the lender's bank account?",
+    "ground_truth": "Under the 2025 Directions (Para 9(v)), for delinquent loans the regulated entity may deploy a physical interface to recover loans in cash wherever necessary, and such transactions are exempted from the requirement of direct repayment in the entity's bank account. Any recovery by cash must be reflected in full in the borrower's account on the same day, and fees payable to LSPs for such recovery must be paid directly by the entity. The repealed 2022 Guidelines (Para 3) required all loan servicing and repayment to be executed by the borrower directly in the regulated entity's bank account and contained no cash-recovery exemption.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, physical cash recovery is allowed for delinquent loans where necessary. \n\nSpecifically, the guidelines state:\n* In the case of delinquent loans, the Regulated Entity (RE) may deploy a physical interface to recover loans in cash, wherever necessary. \n* To afford operational flexibility to the RE, such transactions are exempted from the requirement of direct repayment of the loan in the RE\u2019s bank account. \n\nHowever, it must be ensured that:\n1. Any recovery by cash is duly reflected in full in the borrower\u2019s account on the same day.\n2. Any fees, charges, etc., payable to Lending Service Providers (LSPs) for such recovery are paid directly by the RE and are not charged otherwise.",
+        "latency_sec": 19.03,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the current 2025 Directions allowing physical cash recovery for delinquent loans with specific conditions, properly distinguishing it from older rules. It accurately captured all regulatory nuances including same-day reflection and direct LSP fee payments by the Regulated Entity."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2022-23/111",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2022-23_111_chunk_7",
+          "RBI_2025-26_36_chunk_27"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, physical cash recovery is allowed for delinquent loans where necessary. \n\nSpecifically, in the case of delinquent loans, a Regulated Entity (RE) may deploy a physical interface to recover loans in cash, and such transactions are exempted from the requirement of direct repayment of the loan in the RE\u2019s bank account to afford operational flexibility. However, any cash recovery must be duly reflected in full in the borrower\u2019s account on the same day, and the RE must ensure that any fees or charges payable to Lending Service Providers (LSPs) for such recovery are paid directly by the RE and are not charged to the borrower.",
+        "latency_sec": 47.31,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified and applied the updated 2025 Directions, noting the exception that allows physical cash recovery for delinquent loans and exempts it from direct bank account repayment requirements. It accurately captured the operational conditions such as same-day reflection and direct payment of LSP fees by the entity."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2022-23/111",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2022-23_111_chunk_7",
+          "RBI_2025-26_36_chunk_27"
+        ]
+      },
+      "full": {
+        "response": "Based on the current regulatory directions (Document 2, issued by the Reserve Bank of India on 2025-05-08), physical cash recovery is allowed in the case of delinquent loans. \n\nSpecifically, the guidelines state:\n* **Physical Cash Recovery:** In the case of delinquent loans, the Regulated Entity (RE) may deploy a physical interface to recover loans in cash, wherever necessary. \n* **Exemption:** To afford operational flexibility to the RE, such cash recovery transactions are exempted from the general requirement of direct repayment of the loan into the RE\u2019s bank account. \n* **Conditions:** Any recovery by cash must be duly reflected in full in the borrower\u2019s account on the same day, and the RE must ensure that any fees, charges, etc., payable to Lending Service Providers (LSPs) for such recovery are paid directly by the RE and are not charged [to the borrower].",
+        "latency_sec": 3.39,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the updated 2025 regulatory directions which permit physical cash recovery for delinquent loans, superseding the stricter direct-to-bank account requirement from the repealed 2022 guidelines. It also accurately captured all the necessary compliance conditions associated with the cash recovery exemption."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2022-23/111",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2022-23_111_chunk_7",
+          "RBI_2025-26_36_chunk_27"
+        ]
+      }
+    }
+  },
+  {
+    "id": "T06-DLA-REPORTING",
+    "case_type": "temporal",
+    "topic": "Reporting of digital lending apps to RBI",
+    "conflict_type": "Temporal drift (RBI 2022 repealed vs RBI 2025 current)",
+    "query": "Are regulated entities required to report their digital lending apps to the RBI?",
+    "ground_truth": "Yes. Under the 2025 Directions (Para 17), regulated entities must report all digital lending apps they deploy or join, whether their own or those of LSPs, on the RBI's Centralised Information Management System (CIMS) portal, with the reporting for all DLAs to be completed by June 15, 2025. The Chief Compliance Officer or another official designated by the Board must certify the data. The repealed 2022 Guidelines contained no such reporting requirement.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, yes, Regulated Entities (REs) are required to report all Digital Lending Apps (DLAs) deployed or joined by them\u2014whether their own or those of Lending Service Providers (LSPs), either exclusively or as a platform participant\u2014on the Centralised Information Management System (CIMS) portal of the RBI in the requisite format. \n\nFurthermore, REs must ensure that the reporting in respect of all DLAs on the CIMS portal is completed by **June 15, 2025**.",
+        "latency_sec": 24.99,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified the current requirement under the newer 2025 Directions to report digital lending apps on the RBI's CIMS portal by June 15, 2025. It accurately reflected the ground truth regarding regulated entities' reporting obligations."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_41",
+          "RBI_2025-26_36_chunk_38"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, yes, Regulated Entities (REs) are required to report all Digital Lending Apps (DLAs) deployed or joined by them\u2014whether their own or those of Lending Service Providers (LSPs), either exclusively or as a platform participant\u2014on the Centralised Information Management System (CIMS) portal of the RBI in the requisite format.",
+        "latency_sec": 15.9,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly answered in the affirmative based on the newer 2025 Directions, aligning with the ground truth regarding the requirement to report digital lending apps to the RBI. It successfully identified the current regulatory obligation without falling back on the repealed rules."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_41",
+          "RBI_2025-26_36_chunk_38"
+        ]
+      },
+      "full": {
+        "response": "Yes, Regulated Entities (REs) are required to report all Digital Lending Apps (DLAs) deployed or joined by them\u2014whether their own or those of Lending Service Providers (LSPs), and whether operating exclusively or as a platform participant\u2014on the Centralised Information Management System (CIMS) portal of the RBI in the requisite format. Furthermore, REs must ensure that the reporting in respect of all DLAs on the CIMS portal is completed by June 15, 2025.",
+        "latency_sec": 7.0,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly utilized the newer 2025 Directions to state the requirement and deadline for reporting digital lending apps to the RBI's CIMS portal. It successfully prioritized the current regulatory standard over the repealed 2022 guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_41",
+          "RBI_2025-26_36_chunk_38"
+        ]
+      }
+    }
+  },
+  {
+    "id": "T07-DLG-SECURITISATION",
+    "case_type": "temporal",
+    "topic": "DLG vs synthetic securitisation",
+    "conflict_type": "Temporal drift (RBI 2022 repealed vs RBI 2025 current)",
+    "query": "Are DLG / FLDG arrangements treated as synthetic securitisation under RBI regulations?",
+    "ground_truth": "Under the 2025 Directions (Para 29(ii)), DLG arrangements between a regulated entity and an LSP that conform to Chapter VI shall not be treated as synthetic securitisation as defined under para 6(c) of the Securitisation of Standard Assets Directions, 2021. Under the repealed 2022 Guidelines (Para 15), regulated entities offering products involving First Loss Default Guarantee were advised to adhere to the Securitisation of Standard Assets Directions, 2021, especially the synthetic securitisation provisions in Para 6(c).",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, DLG arrangements entered between a Regulated Entity (RE) and a Lending Service Provider (LSP) that conform to the instructions laid down in Chapter VI of the Directions shall **not** be treated as synthetic securitisation.",
+        "latency_sec": 3.0,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the current RBI regulations, noting that compliant DLG arrangements are not treated as synthetic securitisation. It properly aligned with the newer authoritative rule outlined in the 2025 Directions rather than the repealed 2022 guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_54",
+          "RBI_2022-23_111_chunk_25"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, Default Loss Guarantee (DLG) arrangements entered between a Regulated Entity (RE) and a Lending Service Provider (LSP) that conform to the instructions laid down in Chapter VI of the Directions shall **not** be treated as synthetic securitisation as defined under para 6(c) of Master Direction \u2013 Reserve Bank of India (Securitisation of Standard Assets). \n\n*(Note: This is based on the more recent document, Document 1, dated 2025-05-08).*",
+        "latency_sec": 4.42,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly prioritized the newer 2025 Directions, noting that DLG arrangements conforming to Chapter VI are not treated as synthetic securitisation. It successfully navigated the shift in regulatory stance compared to the repealed 2022 guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_54",
+          "RBI_2022-23_111_chunk_25"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided RBI Directions (RBI/2025-26/36, dated May 8, 2025), Default Loss Guarantee (DLG) arrangements entered between a Regulated Entity (RE) and a Lending Service Provider (LSP) that conform to the instructions laid down in Chapter VI of those Directions **shall not be treated as synthetic securitisation** as defined under para 6(c) of the Master Direction \u2013 Reserve Bank of India (Securitisation of Standard Assets).",
+        "latency_sec": 5.62,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly prioritized the current 2025 RBI regulatory framework over repealed guidelines, accurately identifying that DLG arrangements conforming to Chapter VI are not treated as synthetic securitisation. It successfully aligned with the ground truth resolution without blending outdated rules or relying on external memory."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_54",
+          "RBI_2022-23_111_chunk_25"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A01-DLG-CAP",
+    "case_type": "authority",
+    "topic": "DLG / FLDG cover cap",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "What is the maximum permissible Default Loss Guarantee (DLG / FLDG) cover that can be accepted from a Lending Service Provider? Can a bank's internal policy allow up to 10%?",
+    "ground_truth": "Under the 2025 Directions (Para 23(i)), the total DLG cover on any outstanding portfolio, specified upfront, shall not exceed five per cent of the total amount disbursed out of that loan portfolio at any given time. An internal bank policy permitting DLG cover of up to 10% conflicts with this cap; the regulatory cap of five per cent applies.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents:\n\n* **Maximum permissible DLG cover:** According to Document 2 (para 23.i), the total amount of DLG cover on any outstanding portfolio shall not exceed **five per cent** of the total amount disbursed out of that loan portfolio. \n* **Bank's internal policy allowing up to 10%:** Yes, Document 1 (Section 3.2) states that for high-yield digital unsecured portfolios sourced via Category-A LSPs, the Bank's Credit Risk Committee may approve DLG coverage agreements covering up to **10% (ten percent)** of the total disbursed portfolio.",
+        "latency_sec": 38.8,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model correctly cited the 5% regulatory cap from the governing document but incorrectly validated the bank's internal 10% policy using an outdated or subordinate source. This creates a false compromise by acknowledging a non-compliant internal threshold instead of declaring it a violation of the regulatory cap."
+        },
+        "retrieved_doc_ids": [
+          "ACB/POL/DL/2025-26/07",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "ACB_POL_DL_2025-26_07_chunk_1",
+          "RBI_2025-26_36_chunk_46"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, the maximum permissible Default Loss Guarantee (DLG) cover is addressed in both documents. Resolving the contradiction by giving precedence to Document 2 (which has the more recent issuance date of 2025-09-15, compared to Document 1's date of 2025-05-08):\n\n* **Maximum permissible DLG cover:** The total amount of DLG cover on any outstanding portfolio specified upfront shall not exceed **five per cent (5%)** of the total amount disbursed out of that loan portfolio. \n* **Can a bank's internal policy allow up to 10%?** No. While Document 1 (dated May 2005 / older) mentioned up to 10%, Document 2 (the more recent document issued on September 15, 2025) strictly caps the DLG cover at **five per cent** of the total amount disbursed. Therefore, the newer limit of 5% applies.",
+        "latency_sec": 4.53,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified the 2025 regulatory limit as the governing authority, capping the DLG at 5%. It properly rejected the higher percentage, aligning with the ground truth resolution."
+        },
+        "retrieved_doc_ids": [
+          "ACB/POL/DL/2025-26/07",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "ACB_POL_DL_2025-26_07_chunk_1",
+          "RBI_2025-26_36_chunk_46"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, the answers are as follows:\n\n* **Maximum permissible DLG cover:** The total amount of DLG cover on any outstanding portfolio shall not exceed **five per cent (5%)** of the total amount disbursed out of that loan portfolio (as mandated by the Reserve Bank of India in Document 2).\n* **Can a bank's internal policy allow up to 10%?** **No.** Even though Apex Commercial Bank's Internal Policy (Document 1) permits DLG coverage up to 10% for high-yield digital unsecured portfolios sourced via Category-A LSPs, strict precedence is given to the Reserve Bank of India (Tier 1 Regulator) over Tier 3 Internal Policy. Therefore, the regulatory cap of 5% overrides the internal policy.",
+        "latency_sec": 7.15,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly prioritized the regulatory cap of 5% mandated by the RBI over the bank's internal policy of 10%. It appropriately recognized that the higher regulatory authority overrides the conflicting internal policy."
+        },
+        "retrieved_doc_ids": [
+          "ACB/POL/DL/2025-26/07",
+          "RBI/2025-26/36"
+        ],
+        "retrieved_chunk_ids": [
+          "ACB_POL_DL_2025-26_07_chunk_1",
+          "RBI_2025-26_36_chunk_46"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A02-DLG-FORMS",
+    "case_type": "authority",
+    "topic": "Permitted forms of DLG",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "In what forms can a regulated entity accept a Default Loss Guarantee, and can it accept letters of comfort from the LSP's parent company?",
+    "ground_truth": "Under the 2025 Directions (Para 22(i)), a regulated entity shall accept DLG only in one or more of these forms: cash deposited with the entity; a fixed deposit maintained with a scheduled commercial bank with a lien marked in favour of the entity; or a bank guarantee in favour of the entity. Letters of comfort are not a permitted form, so an internal policy accepting them conflicts with the Directions.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, a Regulated Entity (RE) / Bank can accept a Default Loss Guarantee (DLG) in the following forms:\n\n* Cash deposited with the RE (or escrowed cash deposits)\n* Fixed Deposit maintained with a Scheduled Commercial Bank with a lien marked in favour of the RE\n* Bank Guarantee (or corporate bank guarantees) in favour of the RE\n* Contractual letters of comfort (as mentioned under Document 2, paragraph 3.3).",
+        "latency_sec": 11.14,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model combined the correct permitted forms of Default Loss Guarantee with the incorrect inclusion of letters of comfort, creating a false compromise. This directly contradicts the ground truth and the regulatory directions which explicitly prohibit letters of comfort."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_46",
+          "ACB_POL_DL_2025-26_07_chunk_1"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the acceptable forms of Default Loss Guarantee (DLG) between Document 1 and Document 2. Giving precedence to Document 2 as it has the more recent issuance date (2025-09-15) compared to Document 1 (2025-05-08):\n\n**Forms in which a Regulated Entity (Bank/RE) can accept DLG:**\n* Corporate bank guarantees\n* Escrowed cash deposits\n* Contractual letters of comfort issued by the LSP's parent company (Document 2 explicitly lists \"contractual letters of comfort\" as an accepted form of DLG). \n\nTherefore, yes, the Regulated Entity can accept letters of comfort from the LSP's parent company as per the more recent guidelines.",
+        "latency_sec": 4.64,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The model incorrectly relied on an outdated or contradictory document that permitted letters of comfort, failing to align with the correct 2025 Directions. Consequently, it gave the wrong answer by stating that letters of comfort are acceptable forms of DLG."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_46",
+          "ACB_POL_DL_2025-26_07_chunk_1"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents and the rules of precedence (giving strict precedence to Tier 1 Regulator over Tier 3 Internal Policy), here are the answers regarding the acceptable forms of Default Loss Guarantee (DLG):\n\n**1. Forms in which an RE can accept a DLG:**\nAccording to the Reserve Bank of India (Tier 1 Regulator) Directions (Doc ID: RBI/2025-26/36, dated 2025-05-08), a Regulated Entity (RE) shall accept DLG only in one or more of the following forms:\n* Cash deposited with the RE;\n* Fixed Deposit maintained with a Scheduled Commercial Bank with a lien marked in favour of the RE;\n* Bank Guarantee in favour of the RE.\n\n*(Note: While Tier 3 Internal Policy mentions \"contractual letters of comfort\" as an accepted form, the higher-authority Tier 1 RBI Directions strictly limit acceptable forms of DLG to cash deposits, fixed deposits with a lien, and bank guarantees).*\n\n**2. Can it accept letters of comfort from the LSP's parent company?**\n**No.** Under the binding Tier 1 RBI Directions, \"contractual letters of comfort\" are not included among the permitted forms of DLG. The RE is restricted to accepting DLG only in the form of cash deposited with the RE, a Fixed Deposit with a lien marked in favour of the RE, or a Bank Guarantee in favour of the RE.",
+        "latency_sec": 5.68,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the higher-authority Tier 1 RBI Directions to determine the acceptable forms of DLG while explicitly rejecting the conflicting Tier 3 internal policy. It accurately concluded that letters of comfort are not a permitted form."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_46",
+          "ACB_POL_DL_2025-26_07_chunk_1"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A03-DLG-INVOCATION",
+    "case_type": "authority",
+    "topic": "DLG invocation period",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "Within how many days of a loan becoming overdue must a DLG be invoked, and can an internal policy allow invocation only after 180 days?",
+    "ground_truth": "Under the 2025 Directions (Para 26(i)), the regulated entity shall invoke the DLG within a maximum overdue period of 120 days, unless the loan dues are made good by the borrower before that. An internal policy allowing invocation only once a loan has been overdue for 180 days conflicts with this limit; the 120-day maximum applies.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, there is a difference in the timelines specified across the texts:\n\n* **Document 1** states that the Regulated Entity (RE) shall invoke the DLG within a **maximum overdue period of 120 days**, unless the loan dues are made good by the borrower before that. \n* **Document 2** states that the Bank may invoke the DLG cover once a loan in the guaranteed portfolio has remained overdue for **180 (one hundred eighty) days**. \n\nRegarding whether an internal policy can allow invocation only after 180 days, Document 2 permits DLG invocation at 180 days, while Document 1 sets the maximum overdue period for invocation at 120 days. (Note: The provided excerpts do not explicitly discuss whether an \"internal policy\" can override the 120-day limit specified in Document 1).",
+        "latency_sec": 5.23,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model failed to resolve the conflict between the 120-day rule and the 180-day rule, presenting both documents' contradictory timelines equally instead of prioritizing the authoritative 120-day limit. It also failed to definitively answer whether an internal policy could override this limit."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_49",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the DLG invocation timeline:\n\n* **Document 1 (Issued: 2025-05-08):** States that the Regulated Entity (RE) shall invoke DLG within a maximum overdue period of 120 days.\n* **Document 2 (Issued: 2025-09-15):** States that the Bank may invoke the DLG cover once a loan in the guaranteed portfolio has remained overdue for 180 days.\n\n**Resolution:** \nGiving precedence to Document 2 because it has a more recent issuance date (2025-09-15), the DLG must be invoked once a loan has remained overdue for **180 days**. Consequently, an internal policy allowing invocation only after 180 days is permitted under the most recent guidelines.",
+        "latency_sec": 14.78,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The model incorrectly chose the more recent document's 180-day timeline over the correct 2025 Directions limit of 120 days. Consequently, it erroneously validated an internal policy allowing invocation after 180 days, which conflicts with regulatory requirements."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_49",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, the rules regarding the invocation of Default Loss Guarantee (DLG) are as follows:\n\n1. **Timeline for Invocation:** Regulated Entities (REs) must invoke DLG within a maximum overdue period of **120 days**, unless the loan dues are made good by the borrower before that. \n\n2. **Conflict Resolution & Internal Policy:** Document 1 (issued by the Reserve Bank of India, Authority Tier 1 Regulator) mandates a 120-day maximum overdue period for DLG invocation. Document 2 is an internal bank policy (Authority Tier 3) which suggests an invocation period of 180 days. Giving strict precedence to the higher Authority Tier (Tier 1 Regulator over Tier 3 Internal Policy), the internal policy **cannot** allow invocation only after 180 days. REs must strictly adhere to the RBI norm of invoking DLG within a maximum overdue period of 120 days.",
+        "latency_sec": 7.28,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly prioritized the regulatory mandate (Tier 1) of 120 days over the conflicting internal bank policy (Tier 3) of 180 days. It accurately concluded that the internal policy cannot override the regulatory requirement."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_49",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A04-BIOMETRIC-STORAGE",
+    "case_type": "authority",
+    "topic": "Biometric data storage by LSPs",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "Are Lending Service Providers allowed to store or cache borrower biometric data such as fingerprint data or authentication tokens on their servers?",
+    "ground_truth": "Under the 2025 Directions (Para 13(iii)), the regulated entity shall ensure that no biometric data is stored or collected by the entity and the LSP, unless allowed under extant statutory guidelines. An internal policy permitting LSPs to store biometric authentication tokens and fingerprint data for up to 90 days is not supported by the Directions and conflicts with them.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, there are conflicting guidelines regarding the storage of biometric data:\n\n* **Document 1 (Section iii)** states that the RE shall ensure that no biometric data is stored or collected by the RE and LSP, unless allowed under extant statutory guidelines.\n* **Document 2 (Section 4.2)** states that encrypted biometric authentication tokens and fingerprint minutiae data may be temporarily stored on secured, audited servers of partnered LSPs for up to 90 (ninety) days in order to streamline recurring re-authentication and reduce API latency.",
+        "latency_sec": 9.22,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model presented conflicting guidelines from two separate documents without making a definitive resolution, effectively blending a prohibited practice with a permissive one. It failed to prioritize the higher-authority prohibition over the contradictory internal policy."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_35",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the storage of biometric data, which is resolved by giving precedence to Document 2 as it has a more recent issuance date (2025-09-15) compared to Document 1 (2025-05-08).\n\nAccording to the more recent guidelines in **Document 2 (Section 4.2)**, encrypted biometric authentication tokens and fingerprint minutiae data **may be temporarily stored** on secured, audited servers of partnered Lending Service Providers (LSPs) for up to 90 (ninety) days in order to streamline recurring re-authentication and reduce API latency.",
+        "latency_sec": 4.67,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The generated model response erroneously selected the outdated or contradictory rule permitting the temporary storage of biometric data by LSPs. This directly contradicts the ground truth resolution which states that LSPs are not allowed to store or collect biometric data."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_35",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, there is a contradiction between the Reserve Bank of India (Tier 1 Regulator) guidelines and the Apex Commercial Bank Internal Policy (Tier 3). \n\nApplying the rules of precedence (Tier 1 Regulator takes strict precedence over Tier 3 Internal Policy), **Lending Service Providers (LSPs) are not allowed to store biometric data**, with the following rule:\n\n* **RBI Directions:** The Regulated Entity (RE) shall ensure that **no biometric data is stored or collected** by the RE and the LSP, unless allowed under extant statutory guidelines.",
+        "latency_sec": 18.05,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the rules of precedence to prioritize the RBI Tier 1 Regulator guidelines over the internal policy. It accurately concluded that LSPs are not allowed to store biometric data based on the higher authority."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_35",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A05-DEVICE-PERMISSIONS",
+    "case_type": "authority",
+    "topic": "Access to contact list and call logs",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "Can a digital lending app access a borrower's contact list and call logs if the borrower gives consent at onboarding?",
+    "ground_truth": "No. Under the 2025 Directions (Para 12(i)), digital lending apps shall desist from accessing mobile phone resources like file and media, contact list, call logs and telephony functions. Only a one-time access to camera, microphone, location or any other facility necessary for on-boarding/KYC requirements may be taken, with the explicit consent of the borrower. An internal policy permitting access to the contact list and call logs on the basis of consent conflicts with the Directions.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, there is conflicting information:\n\n* **Document 1** states that Regulated Entities (REs) must ensure that Digital Lending Apps (DLAs) and Lending Service Provider (LSP) DLAs **desist from accessing** mobile phone resources such as file and media, **contact lists, call logs**, telephony functions, etc., regardless of consent for those specific resources.\n* **Document 2** states that with the borrower's in-app consent at onboarding, DLAs **may access** the borrower's contact list and call logs to support credit scoring and collections follow-up.",
+        "latency_sec": 2.94,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model presented conflicting information by treating both documents as valid alternatives instead of prioritizing the correct prohibition over the outdated or contradictory rule. This resulted in a false compromise rather than a definitive resolution aligned with the ground truth."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_32",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding whether a Digital Lending App (DLA) can access a borrower's contact list and call logs. \n\nTo resolve this contradiction, precedence is given to **Document 2**, which has a more recent issuance date (2025-09-15) compared to Document 1 (2025-05-08). \n\nAccording to **Document 2** (Section 4.1), yes, DLAs may access the borrower's contact list and call logs to support credit scoring and collections follow-up, provided they have the borrower's in-app consent at onboarding.",
+        "latency_sec": 3.21,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The generated model response incorrectly concluded that the digital lending app could access contact lists and call logs based on an outdated or contradictory document. This directly contradicts the ground truth correct resolution, which explicitly prohibits such access under the 2025 Directions regardless of consent."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_32",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, there is a contradiction between the Reserve Bank of India (Tier 1 Regulator) directions and the Apex Commercial Bank Internal Policy (Tier 3). \n\nGiving strict precedence to the higher Authority Tier (Tier 1 Regulator > Tier 3 Internal Policy), **Digital Lending Apps (DLAs) are strictly prohibited from accessing a borrower's contact list and call logs**, regardless of whether the borrower provides consent. \n\nAccording to the Reserve Bank of India (Document 1):\n* REs (Regulated Entities) must ensure that DLAs desist from accessing mobile phone resources like file and media, contact list, call logs, telephony functions, etc. \n* Data collection must be need-based with prior and explicit consent, but access is strictly limited to a one-time access for camera, microphone, location, or any other facility necessary strictly for on-boarding/KYC requirements.",
+        "latency_sec": 4.43,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly prioritized the higher authority regulator directions over the internal policy. It accurately identified that digital lending apps are prohibited from accessing contact lists and call logs despite user consent."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_32",
+          "ACB_POL_DL_2025-26_07_chunk_2"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A06-OFFSHORE-PROCESSING",
+    "case_type": "authority",
+    "topic": "Retention of data processed outside India",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "If borrower data is processed outside India, how long can it remain on servers outside India?",
+    "ground_truth": "Under the 2025 Directions (Para 13(iv)), where data is processed outside India, it shall be deleted from servers outside India and brought back to India within 24 hours of processing. An internal policy allowing offshore retention for up to seven days conflicts with this requirement; the 24-hour limit applies.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, the retention period for data processed outside India depends on the specific document context:\n\n* According to Document 1 (section iv), data must be deleted from servers outside India and brought back to India within **24 hours** of processing.\n* According to Document 2 (section 4.3), where borrower data is processed on cloud infrastructure located outside India, the processed data may be retained on such offshore servers for up to **7 (seven) days** before it is transferred back to servers in India.",
+        "latency_sec": 9.86,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model combined mutually exclusive rules from different tiers, citing both the 24-hour limit and the conflicting 7-day retention period as valid options depending on the document. It failed to resolve the contradiction by prioritizing the higher authority rule as specified in the ground truth."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_35",
+          "ACB_POL_DL_2025-26_07_chunk_3"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the timeframe for offshore data processing:\n\n* **Document 1 (Issued: 2025-05-08):** States that data processed outside India shall be deleted from servers outside India and brought back to India **within 24 hours** of processing.\n* **Document 2 (Issued: 2025-09-15):** States that processed data may be retained on offshore servers for **up to 7 (seven) days** before it is transferred back to servers in India.\n\nResolving the contradiction by giving precedence to the document with the more recent issuance date (Document 2, issued on 2025-09-15), the data may be retained on offshore servers for **up to 7 (seven) days**.",
+        "latency_sec": 12.21,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The model incorrectly selected the newer but subordinate or conflicting Document 2, which allows a 7-day retention period, instead of adhering to the strict 24-hour limit specified in the ground truth correct resolution. This represents an erroneous selection of an outdated or invalid rule."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_35",
+          "ACB_POL_DL_2025-26_07_chunk_3"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, there is a contradiction between the Reserve Bank of India (RBI) directions and the Apex Commercial Bank internal policy regarding the retention of data processed outside India:\n\n* **Tier 1 Regulator (Reserve Bank of India - Doc 1, dated 2025-05-08):** States that data processed outside India shall be deleted from servers outside India and brought back to India **within 24 hours** of processing.\n* **Tier 3 Internal Policy (Apex Commercial Bank - Doc 2, dated 2025-09-15):** States that where borrower data is processed on cloud infrastructure located outside India, the processed data may be retained on such offshore servers for **up to 7 (seven) days** before it is transferred back to servers in India.\n\n**Resolution:** \nStrict precedence is given to the higher Authority Tier (Tier 1 Regulator over Tier 3 Internal Policy). Therefore, the data must be deleted from servers outside India and brought back to India **within 24 hours** of processing.",
+        "latency_sec": 11.19,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identified the conflict between the Tier 1 regulator and Tier 3 internal policy. It prioritized the higher authority rule, correctly stating that the data must be brought back within 24 hours."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_35",
+          "ACB_POL_DL_2025-26_07_chunk_3"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A07-LSP-COLLECTION-FEE",
+    "case_type": "authority",
+    "topic": "LSP fees on recovered cash",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "Can an LSP deduct a collection fee from cash recovered from a borrower, or must the lender pay the LSP's recovery fee directly?",
+    "ground_truth": "Under the 2025 Directions (Para 9(v); see also Para 9(iv)), fees and charges payable to LSPs for recovery must be paid directly by the regulated entity and must not be charged by the LSP to the borrower, either directly or indirectly from the recovery proceeds. An internal policy allowing the LSP to deduct a 2% collection fee from the cash recovered conflicts with this requirement.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, there appears to be conflicting information:\n\n* **Document 1** states that charges payable to LSPs for recovery must be paid directly by the RE (Regulated Entity) and \"are not charged by LSP to the borrower either directly or indirectly from the recovery proceeds.\"\n* **Document 2** states that \"The LSP may deduct a collection facilitation fee of 2% (two percent) from the amount recovered in cash and remit the balance to the Bank.\"",
+        "latency_sec": 4.04,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model failed to resolve the contradiction present in the provided documents and instead highlighted both conflicting rules without establishing which one was legally correct. This creates a false compromise rather than selecting the authoritative 2025 Directions standard."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "ACB_POL_DL_2025-26_07_chunk_4"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the payment of recovery fees to Lending Service Providers (LSPs), which is resolved by giving precedence to Document 2 as it has a more recent issuance date (2025-09-15) compared to Document 1 (2025-05-08).\n\nAccording to Document 2, the LSP may deduct a collection facilitation fee of 2% (two percent) from the amount recovered in cash and remit the balance to the Bank.",
+        "latency_sec": 169.54,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The ground truth states that under the 2025 Directions, LSPs must not charge recovery fees from the borrower's recovery proceeds. The model incorrectly selected the older, contradictory rule allowing the 2% deduction based on document issuance dates."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "ACB_POL_DL_2025-26_07_chunk_4"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, there is a contradiction between the RBI Directions (Tier 1 Regulator) and the Apex Commercial Bank Internal Policy (Tier 3 Internal Policy). \n\nResolving the contradiction by giving strict precedence to the higher Authority Tier (Tier 1 Regulator over Tier 3 Internal Policy):\n\nThe charges, fees, etc., payable to Lending Service Providers (LSPs) for recovery **must be paid directly by the Regulated Entity (RE) and shall not be charged by the LSP to the borrower either directly or indirectly from the recovery proceeds.** \n\nTherefore, an LSP cannot deduct a collection fee from the cash recovered from a borrower; the lender must pay the LSP's recovery fee directly.",
+        "latency_sec": 578.77,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the higher authority rule by prioritizing the RBI Directions over the internal bank policy. It accurately concluded that the lender must pay the recovery fee directly and that the LSP cannot deduct it from the recovery proceeds."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "ACB_POL_DL_2025-26_07_chunk_4"
+        ]
+      }
+    }
+  },
+  {
+    "id": "A08-AUTO-LIMIT-INCREASE",
+    "case_type": "authority",
+    "topic": "Automatic credit limit increase",
+    "conflict_type": "Authority hierarchy (RBI 2025, Tier 1 vs Apex SOP, Tier 3; SOP dated later)",
+    "query": "Can a lender automatically increase a borrower's credit limit on a digital loan product after a period of good repayment?",
+    "ground_truth": "No. Under the 2025 Directions (Para 7(ii)), the regulated entity shall ensure that there is no automatic increase in credit limit unless an explicit request is received, evaluated and kept on record from the borrower for such increase. An internal policy increasing limits automatically every six months, with only an SMS intimation, conflicts with the Directions.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, there appears to be conflicting information:\n\n* **Document 1 (Chapter III, Section 7 ii)** states that the Regulated Entity (RE) \"shall ensure that there is no automatic increase in credit limit unless an explicit request is received, evaluated and kept on record from the borrower for such increase.\"\n* **Document 2 (Section 6.1)** states that \"For borrowers with satisfactory repayment history, the credit limit on a digital loan product may be increased automatically every six months, with intimation to the borrower by SMS.\"",
+        "latency_sec": 309.4,
+        "eval": {
+          "classification": "FRANKENSTEIN_BLENDING",
+          "reasoning": "The model failed to resolve the contradiction present in the retrieved documents, instead presenting both mutually exclusive rules side-by-side. It should have prioritized the higher authority rule prohibiting automatic increases as stated in the ground truth."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_20",
+          "ACB_POL_DL_2025-26_07_chunk_4"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, there is a contradiction regarding the automatic increase of credit limits:\n\n* **Document 1 (Issued: 2025-05-08)** states that the Regulated Entity (RE) shall ensure there is **no automatic increase** in credit limit unless an explicit request is received, evaluated, and kept on record from the borrower.\n* **Document 2 (Issued: 2025-09-15)** states that for borrowers with a satisfactory repayment history, the credit limit on a digital loan product **may be increased automatically** every six months, with intimation to the borrower by SMS.\n\nTo resolve this contradiction, precedence is given to **Document 2** as it has a more recent issuance date (2025-09-15). \n\nTherefore, **yes**, for borrowers with a satisfactory repayment history, the credit limit on a digital loan product may be increased automatically every six months, with intimation to the borrower by SMS.",
+        "latency_sec": 2.97,
+        "eval": {
+          "classification": "OUTDATED_RULE_SELECTED",
+          "reasoning": "The model incorrectly chose the more recent document's policy, violating the negative constraint in the ground truth that automatic credit limit increases are strictly prohibited without explicit borrower consent. It failed to identify that the newer document introduced a contradictory and non-compliant rule."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_20",
+          "ACB_POL_DL_2025-26_07_chunk_4"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents and the compliance rules for precedence:\n\n* **Document 1:** Issued by the Reserve Bank of India (Tier 1 Regulator), dated 2025-05-08, states: *\"RE shall ensure that there is no automatic increase in credit limit unless an explicit request is received, evaluated and kept on record from the borrower for such increase.\"*\n* **Document 2:** Issued by Apex Commercial Bank (Tier 3 Internal Policy), dated 2025-09-15, states that credit limits may be increased automatically every six months for borrowers with satisfactory repayment history.\n\n**Resolution:** \nBecause Tier 1 Regulator rules take strict precedence over Tier 3 Internal Policy, the lender **cannot** automatically increase a borrower's credit limit based on repayment history. \n\n**Answer:**\nNo. A lender cannot automatically increase a borrower's credit limit. Under regulatory requirements, there must be an explicit request received, evaluated, and kept on record from the borrower before any credit limit increase can be made.",
+        "latency_sec": 21.23,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly recognized that the Tier 1 Regulator rules take strict precedence over the Tier 3 internal policy. It accurately resolved the conflict by stating that a lender cannot automatically increase a credit limit without an explicit request from the borrower."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_20",
+          "ACB_POL_DL_2025-26_07_chunk_4"
+        ]
+      }
+    }
+  },
+  {
+    "id": "C01-LONGER-COOLING-OFF",
+    "case_type": "control",
+    "topic": "Bank-chosen cooling-off period above the minimum",
+    "conflict_type": "Control (no genuine conflict)",
+    "query": "Can a bank's loan policy set a cooling-off period of seven days for digital loans?",
+    "ground_truth": "Yes. Under the 2025 Directions (Para 10(i)), the cooling-off period is determined by the Board of the regulated entity as laid down in its loan policy, subject to the period not being less than one day. A seven-day period is above the regulatory minimum and is therefore permissible.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, yes, a bank's loan policy can set a cooling-off period of seven days for digital loans. \n\nSpecifically, Document 2 states that \"the cooling-off period for digital retail loans disbursed through partnered DLAs shall be 7 (seven) days from the date of loan disbursal.\" Additionally, Document 1 states that the cooling-off period shall be determined by the Board of the RE (Regulated Entity) as laid down in their loan policy, subject to the period not being less than one day.",
+        "latency_sec": 1207.51,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly evaluated that a seven-day cooling-off period is permissible because the regulations permit the Board to set the period as long as it is not less than one day. The model successfully synthesized the regulatory floor with the specific policy provision without violating compliance rules."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "ACB_POL_DL_2025-26_07_chunk_0"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, yes, a bank's loan policy can set a cooling-off period of seven days for digital loans. \n\nAccording to Document 2 (Apex Commercial Bank Limited's Policy Document dated September 15, 2025), the cooling-off period for digital retail loans disbursed through partnered DLAs is established as 7 (seven) days from the date of loan disbursal. Furthermore, Document 1 (dated May 8, 2025) specifies that the cooling-off period is determined by the Board of the RE as laid down in their loan policy, subject to it not being less than one day.",
+        "latency_sec": 7.4,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly applied the regulatory rule from the May 2025 document that allows the Board to determine the cooling-off period as long as it is at least one day. It also properly aligned this with the specific bank policy of seven days found in the retrieved documents."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "ACB_POL_DL_2025-26_07_chunk_0"
+        ]
+      },
+      "full": {
+        "response": "Yes. According to the internal policy of Apex Commercial Bank (Document 2), the cooling-off period for digital retail loans disbursed through partnered DLAs is set to 7 (seven) days from the date of loan disbursal. \n\nFurthermore, this aligns with the Reserve Bank of India's regulatory guidelines (Document 1), which state that the cooling-off period shall be determined by the Board of the Regulated Entity (RE) as laid down in their loan policy, provided that the determined period is **not less than one day**. Since 7 days satisfies the minimum requirement of one day, it is permissible.",
+        "latency_sec": 5.26,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly evaluated that a seven-day cooling-off period is permissible because it satisfies the regulatory minimum of not less than one day set by the governing authority. It properly aligned the loan policy with the overarching guidelines."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "ACB/POL/DL/2025-26/07"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_28",
+          "ACB_POL_DL_2025-26_07_chunk_0"
+        ]
+      }
+    }
+  },
+  {
+    "id": "C02-CIC-REPORTING",
+    "case_type": "control",
+    "topic": "Reporting to Credit Information Companies",
+    "conflict_type": "Control (no genuine conflict)",
+    "query": "Must digital loans be reported to Credit Information Companies, and does the nature or tenor of the loan matter?",
+    "ground_truth": "Yes. Under the 2025 Directions (Para 16(i)), any lending done through the regulated entity's DLAs or the DLAs of its LSPs must be reported to Credit Information Companies irrespective of its nature or tenor. The repealed 2022 Guidelines (Para 14.1) contained the same requirement, so the rule is unchanged between the two versions.",
+    "modes": {
+      "naive": {
+        "response": "Based on the provided documents, yes, digital loans must be reported to Credit Information Companies (CICs). The nature or tenor of the loan does not matter, as Regulated Entities (REs) must ensure that any lending done through their DLAs and/or DLAs of LSPs is reported to CICs \"irrespective of its nature/ tenor.\"",
+        "latency_sec": 2.77,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model accurately identified that digital loans must be reported to Credit Information Companies regardless of their nature or tenor, aligning with the ground truth resolution. It correctly applied the current regulatory standard without relying on outdated rules or outside parametric memory."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_37",
+          "RBI_2022-23_111_chunk_23"
+        ]
+      },
+      "recency_only": {
+        "response": "Based on the provided documents, yes, digital loans must be reported to Credit Information Companies (CICs). The nature or tenor of the loan does not matter, as Regulated Entities (REs) must ensure that any lending done through their Digital Lending Apps (DLAs) and/or DLAs of Lending Service Providers (LSPs) is reported to CICs \"irrespective of its nature/ tenor.\"",
+        "latency_sec": 4.57,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly identifies that digital loans must be reported to Credit Information Companies regardless of nature or tenor, aligning with the ground truth. It successfully reflects the current regulatory requirement without blending outdated information or hallucinating from outside memory."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_37",
+          "RBI_2022-23_111_chunk_23"
+        ]
+      },
+      "full": {
+        "response": "Based on the provided documents, yes, digital loans must be reported to Credit Information Companies (CICs). The nature or tenor of the loan does not matter, as Regulated Entities (REs) must ensure that any lending done through their Digital Lending Apps (DLAs) and/or DLAs of Lending Service Providers (LSPs) is reported to CICs \"irrespective of its nature/ tenor.\"",
+        "latency_sec": 2.76,
+        "eval": {
+          "classification": "AUTHORITY_CORRECT_RESOLUTION",
+          "reasoning": "The model correctly concluded that digital loans must be reported to Credit Information Companies regardless of their nature or tenor. It accurately aligned with the governing regulatory directions provided in the ground truth."
+        },
+        "retrieved_doc_ids": [
+          "RBI/2025-26/36",
+          "RBI/2022-23/111"
+        ],
+        "retrieved_chunk_ids": [
+          "RBI_2025-26_36_chunk_37",
+          "RBI_2022-23_111_chunk_23"
+        ]
+      }
+    }
+  }
+]

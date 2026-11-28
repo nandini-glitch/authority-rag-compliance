@@ -1,0 +1,48 @@
+accuracy | Standard retrieval (top-$k$=15) | naive: 9/17 = 52.9%  (Wilson 95% CI 31.0-73.8)
+accuracy | Standard retrieval (top-$k$=15) | recency_only: 12/17 = 70.6%  (Wilson 95% CI 46.9-86.7)
+accuracy | Standard retrieval (top-$k$=15) | full: 15/17 = 88.2%  (Wilson 95% CI 65.7-96.7)
+accuracy | Oracle context (gold chunks) | naive: 7/17 = 41.2%  (Wilson 95% CI 21.6-64.0)
+accuracy | Oracle context (gold chunks) | recency_only: 10/17 = 58.8%  (Wilson 95% CI 36.0-78.4)
+accuracy | Oracle context (gold chunks) | full: 17/17 = 100.0%  (Wilson 95% CI 81.6-100.0)
+by type | Standard retrieval (top-$k$=15) | temporal | naive: 5/7
+by type | Standard retrieval (top-$k$=15) | authority | naive: 3/8
+by type | Standard retrieval (top-$k$=15) | control | naive: 1/2
+by type | Standard retrieval (top-$k$=15) | temporal | recency_only: 6/7
+by type | Standard retrieval (top-$k$=15) | authority | recency_only: 4/8
+by type | Standard retrieval (top-$k$=15) | control | recency_only: 2/2
+by type | Standard retrieval (top-$k$=15) | temporal | full: 7/7
+by type | Standard retrieval (top-$k$=15) | authority | full: 6/8
+by type | Standard retrieval (top-$k$=15) | control | full: 2/2
+by type | Oracle context (gold chunks) | temporal | naive: 5/7
+by type | Oracle context (gold chunks) | authority | naive: 0/8
+by type | Oracle context (gold chunks) | control | naive: 2/2
+by type | Oracle context (gold chunks) | temporal | recency_only: 7/7
+by type | Oracle context (gold chunks) | authority | recency_only: 1/8
+by type | Oracle context (gold chunks) | control | recency_only: 2/2
+by type | Oracle context (gold chunks) | temporal | full: 7/7
+by type | Oracle context (gold chunks) | authority | full: 8/8
+by type | Oracle context (gold chunks) | control | full: 2/2
+outcomes | Standard retrieval (top-$k$=15) | naive | Correct: 9
+outcomes | Standard retrieval (top-$k$=15) | recency_only | Correct: 12
+outcomes | Standard retrieval (top-$k$=15) | full | Correct: 15
+outcomes | Standard retrieval (top-$k$=15) | naive | Blended (judge label): 4
+outcomes | Standard retrieval (top-$k$=15) | recency_only | Blended (judge label): 1
+outcomes | Standard retrieval (top-$k$=15) | full | Blended (judge label): 0
+outcomes | Standard retrieval (top-$k$=15) | naive | Wrong rule selected: 4
+outcomes | Standard retrieval (top-$k$=15) | recency_only | Wrong rule selected: 3
+outcomes | Standard retrieval (top-$k$=15) | full | Wrong rule selected: 2
+outcomes | Standard retrieval (top-$k$=15) | naive | Parametric: 0
+outcomes | Standard retrieval (top-$k$=15) | recency_only | Parametric: 1
+outcomes | Standard retrieval (top-$k$=15) | full | Parametric: 0
+outcomes | Oracle context (gold chunks) | naive | Correct: 7
+outcomes | Oracle context (gold chunks) | recency_only | Correct: 10
+outcomes | Oracle context (gold chunks) | full | Correct: 17
+outcomes | Oracle context (gold chunks) | naive | Blended (judge label): 9
+outcomes | Oracle context (gold chunks) | recency_only | Blended (judge label): 0
+outcomes | Oracle context (gold chunks) | full | Blended (judge label): 0
+outcomes | Oracle context (gold chunks) | naive | Wrong rule selected: 1
+outcomes | Oracle context (gold chunks) | recency_only | Wrong rule selected: 7
+outcomes | Oracle context (gold chunks) | full | Wrong rule selected: 0
+outcomes | Oracle context (gold chunks) | naive | Parametric: 0
+outcomes | Oracle context (gold chunks) | recency_only | Parametric: 0
+outcomes | Oracle context (gold chunks) | full | Parametric: 0

@@ -1,0 +1,7 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "retrieval_mode": "oracle",
+  "top_k": 15,
+  "chunks_sha": "8e54476eb1d513c0",
+  "cases_sha": "8b702d293ec77ffa"
+}
